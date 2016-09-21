@@ -1,6 +1,6 @@
 import assert from 'assert';
 import deepFreeze from 'deep-freeze-strict';
-import {extractProperties} from './h';
+import {extractProperties} from '../h';
 
 suite('Extract properties', function () {
     test('without properties', function () {

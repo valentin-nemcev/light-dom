@@ -1,6 +1,6 @@
-import {base as h} from './h';
 import assert from 'assert';
 import deepFreeze from 'deep-freeze-strict';
+import {base as h} from '../h';
 
 suite('Base', function () {
     test('selector', function () {

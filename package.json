@@ -4,7 +4,7 @@
   "description": "Virtual DOM helper for snabbdom",
   "main": "h.js",
   "scripts": {
-    "test": "mocha --ui tdd --require babel-register *.test.js",
+    "test": "mocha --ui tdd --require babel-register tests/*.test.js",
     "build": "babel-node generateTagsProperties.js"
   },
   "repository": {

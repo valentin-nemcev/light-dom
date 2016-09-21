@@ -1,6 +1,6 @@
 import assert from 'assert';
 import deepFreeze from 'deep-freeze-strict';
-import h from './h';
+import h from '../h';
 
 suite('h', function () {
     test('tagName', function () {
