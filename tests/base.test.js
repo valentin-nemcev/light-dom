@@ -6,7 +6,7 @@ suite('Base', function () {
     test('selector', function () {
         assert.deepStrictEqual(
             h({selector: 'span#id.class'}),
-            {sel: 'span#id.class', text: ''},
+            {sel: 'span#id.class', data: {}, text: ''},
         )
     });
 
@@ -33,28 +33,28 @@ suite('Base', function () {
     test('text children', function () {
         assert.deepStrictEqual(
             h({selector: 'span', children: 'text'}),
-            {sel: 'span', text: 'text'}
+            {sel: 'span', data: {}, text: 'text'}
         );
     });
 
     test('numeric children', function () {
         assert.deepStrictEqual(
             h({selector: 'span', children: 123}),
-            {sel: 'span', text: '123'}
+            {sel: 'span', data: {}, text: '123'}
         );
     });
 
     test('boolean children', function () {
         assert.deepStrictEqual(
             h({selector: 'span', children: false}),
-            {sel: 'span', text: 'false'}
+            {sel: 'span', data: {}, text: 'false'}
         );
     });
 
     test('null children', function () {
         assert.deepStrictEqual(
             h({selector: 'span', children: null}),
-            {sel: 'span', text: ''}
+            {sel: 'span', data: {}, text: ''}
         );
     });
 
@@ -87,6 +87,7 @@ suite('Base', function () {
         ]});
         assert.deepStrictEqual(vnode, {
             sel: 'div',
+            data: {},
             children: [
                 {text: 'false'},
                 {text: '123'},

@@ -32,9 +32,9 @@ function normalizeChildren(children, normalized) {
 export function base({selector = '', key, children, ...options}) {
     const vnode = {
         sel: selector,
+        data: options,
     };
 
-    if (!isEmptyObject(options)) vnode.data = options;
     if (key !== undefined) vnode.key = key;
 
     if (Array.isArray(children)) {
