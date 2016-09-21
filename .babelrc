@@ -1,5 +1,8 @@
 {
     "sourceMaps": true,
-    "plugins": ["transform-es2015-modules-commonjs"],
-    "presets": ["es2015", "stage-2", "babel-preset-power-assert"]
+    "plugins": [
+        "transform-es2015-modules-commonjs",
+        "transform-object-rest-spread"
+    ],
+    "presets": ["es2015", "babel-preset-power-assert"]
 }

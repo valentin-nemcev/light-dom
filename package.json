@@ -1,6 +1,6 @@
 {
   "name": "snabbdom-flat-h",
-  "version": "1.0.0-pre.2",
+  "version": "1.0.0-pre.3",
   "description": "Virtual DOM helper for snabbdom",
   "main": "h.js",
   "scripts": {
@@ -17,12 +17,11 @@
   },
   "homepage": "https://github.com/valentin-nemcev/snabbdom-flat-h#readme",
   "devDependencies": {
-    "ava": "0.16.0",
     "babel-cli": "6.14.0",
     "babel-plugin-transform-es2015-modules-commonjs": "6.14.0",
+    "babel-plugin-transform-object-rest-spread": "6.8.0",
     "babel-preset-es2015": "6.14.0",
     "babel-preset-power-assert": "1.0.0",
-    "babel-preset-stage-2": "6.13.0",
     "babel-register": "6.14.0",
     "deep-freeze-strict": "1.1.1",
     "idl4js": "0.0.2",
