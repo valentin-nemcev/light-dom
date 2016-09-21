@@ -1,0 +1,586 @@
+{
+    "_global": {
+        "id": "String",
+        "className": "String",
+        "title": "String",
+        "lang": "String",
+        "translate": "Boolean",
+        "dir": "String",
+        "itemScope": "Boolean",
+        "itemId": "String",
+        "itemValue": "Any",
+        "hidden": "Boolean",
+        "tabIndex": "Int32",
+        "accessKey": "String",
+        "draggable": "Boolean",
+        "contentEditable": "String",
+        "contextMenu": "HTMLMenuElement",
+        "spellcheck": "Boolean"
+    },
+    "a": {
+        "href": "String",
+        "target": "String",
+        "download": "String",
+        "ping": "String",
+        "rel": "String",
+        "media": "String",
+        "hreflang": "String",
+        "type": "String",
+        "text": "String",
+        "protocol": "String",
+        "host": "String",
+        "hostname": "String",
+        "port": "String",
+        "pathname": "String",
+        "search": "String",
+        "hash": "String",
+        "coords": "String",
+        "charset": "String",
+        "name": "String",
+        "rev": "String",
+        "shape": "String"
+    },
+    "abbr": {},
+    "address": {},
+    "area": {
+        "alt": "String",
+        "coords": "String",
+        "shape": "String",
+        "href": "String",
+        "target": "String",
+        "download": "String",
+        "ping": "String",
+        "rel": "String",
+        "media": "String",
+        "hreflang": "String",
+        "type": "String",
+        "protocol": "String",
+        "host": "String",
+        "hostname": "String",
+        "port": "String",
+        "pathname": "String",
+        "search": "String",
+        "hash": "String",
+        "noHref": "Boolean"
+    },
+    "article": {},
+    "aside": {},
+    "audio": {
+        "src": "String",
+        "crossOrigin": "String",
+        "preload": "String",
+        "currentTime": "Float64",
+        "defaultPlaybackRate": "Float64",
+        "playbackRate": "Float64",
+        "autoplay": "Boolean",
+        "loop": "Boolean",
+        "mediaGroup": "String",
+        "controller": "MediaController",
+        "controls": "Boolean",
+        "volume": "Float64",
+        "muted": "Boolean",
+        "defaultMuted": "Boolean"
+    },
+    "b": {},
+    "base": {
+        "href": "String",
+        "target": "String"
+    },
+    "bdi": {},
+    "bdo": {},
+    "blockquote": {
+        "cite": "String"
+    },
+    "body": {
+        "text": "String",
+        "link": "String",
+        "vLink": "String",
+        "aLink": "String",
+        "bgColor": "String",
+        "background": "String"
+    },
+    "br": {
+        "clear": "String"
+    },
+    "button": {
+        "autofocus": "Boolean",
+        "disabled": "Boolean",
+        "formAction": "String",
+        "formEnctype": "String",
+        "formMethod": "String",
+        "formNoValidate": "Boolean",
+        "formTarget": "String",
+        "name": "String",
+        "type": "String",
+        "value": "String"
+    },
+    "canvas": {
+        "width": "Uint32",
+        "height": "Uint32"
+    },
+    "caption": {
+        "align": "String"
+    },
+    "cite": {},
+    "code": {},
+    "col": {
+        "span": "Uint32",
+        "align": "String",
+        "ch": "String",
+        "chOff": "String",
+        "vAlign": "String",
+        "width": "String"
+    },
+    "colgroup": {
+        "span": "Uint32",
+        "align": "String",
+        "ch": "String",
+        "chOff": "String",
+        "vAlign": "String",
+        "width": "String"
+    },
+    "command": {
+        "type": "String",
+        "label": "String",
+        "icon": "String",
+        "disabled": "Boolean",
+        "checked": "Boolean",
+        "radiogroup": "String"
+    },
+    "dd": {},
+    "del": {
+        "cite": "String",
+        "dateTime": "String"
+    },
+    "details": {
+        "open": "Boolean"
+    },
+    "dfn": {},
+    "div": {
+        "align": "String"
+    },
+    "dl": {
+        "compact": "Boolean"
+    },
+    "dt": {},
+    "em": {},
+    "embed": {
+        "src": "String",
+        "type": "String",
+        "width": "String",
+        "height": "String",
+        "align": "String",
+        "name": "String"
+    },
+    "fieldset": {
+        "disabled": "Boolean",
+        "name": "String"
+    },
+    "figcaption": {},
+    "figure": {},
+    "footer": {},
+    "form": {
+        "acceptCharset": "String",
+        "action": "String",
+        "autocomplete": "String",
+        "enctype": "String",
+        "encoding": "String",
+        "method": "String",
+        "name": "String",
+        "noValidate": "Boolean",
+        "target": "String"
+    },
+    "head": {},
+    "h1": {
+        "align": "String"
+    },
+    "h2": {
+        "align": "String"
+    },
+    "h3": {
+        "align": "String"
+    },
+    "h4": {
+        "align": "String"
+    },
+    "h5": {
+        "align": "String"
+    },
+    "h6": {
+        "align": "String"
+    },
+    "header": {},
+    "hgroup": {},
+    "hr": {
+        "align": "String",
+        "color": "String",
+        "noShade": "Boolean",
+        "size": "String",
+        "width": "String"
+    },
+    "html": {
+        "version": "String"
+    },
+    "i": {},
+    "iframe": {
+        "src": "String",
+        "srcdoc": "String",
+        "name": "String",
+        "seamless": "Boolean",
+        "width": "String",
+        "height": "String",
+        "align": "String",
+        "scrolling": "String",
+        "frameBorder": "String",
+        "longDesc": "String",
+        "marginHeight": "String",
+        "marginWidth": "String"
+    },
+    "img": {
+        "alt": "String",
+        "src": "String",
+        "srcset": "String",
+        "crossOrigin": "String",
+        "useMap": "String",
+        "isMap": "Boolean",
+        "width": "Uint32",
+        "height": "Uint32",
+        "name": "String",
+        "align": "String",
+        "hspace": "Uint32",
+        "vspace": "Uint32",
+        "longDesc": "String",
+        "border": "String"
+    },
+    "input": {
+        "accept": "String",
+        "alt": "String",
+        "autocomplete": "String",
+        "autofocus": "Boolean",
+        "defaultChecked": "Boolean",
+        "checked": "Boolean",
+        "dirName": "String",
+        "disabled": "Boolean",
+        "formAction": "String",
+        "formEnctype": "String",
+        "formMethod": "String",
+        "formNoValidate": "Boolean",
+        "formTarget": "String",
+        "height": "Uint32",
+        "indeterminate": "Boolean",
+        "inputMode": "String",
+        "max": "String",
+        "maxLength": "Int32",
+        "min": "String",
+        "multiple": "Boolean",
+        "name": "String",
+        "pattern": "String",
+        "placeholder": "String",
+        "readOnly": "Boolean",
+        "required": "Boolean",
+        "size": "Uint32",
+        "src": "String",
+        "step": "String",
+        "type": "String",
+        "defaultValue": "String",
+        "value": "String",
+        "valueAsDate": "Date",
+        "valueAsNumber": "Float64",
+        "width": "Uint32",
+        "selectionStart": "Uint32",
+        "selectionEnd": "Uint32",
+        "selectionDirection": "String",
+        "align": "String",
+        "useMap": "String"
+    },
+    "ins": {
+        "cite": "String",
+        "dateTime": "String"
+    },
+    "kbd": {},
+    "keygen": {
+        "autofocus": "Boolean",
+        "challenge": "String",
+        "disabled": "Boolean",
+        "keytype": "String",
+        "name": "String"
+    },
+    "label": {
+        "htmlFor": "String"
+    },
+    "legend": {
+        "align": "String"
+    },
+    "li": {
+        "value": "Int32",
+        "type": "String"
+    },
+    "link": {
+        "disabled": "Boolean",
+        "href": "String",
+        "rel": "String",
+        "media": "String",
+        "hreflang": "String",
+        "type": "String",
+        "charset": "String",
+        "rev": "String",
+        "target": "String"
+    },
+    "map": {
+        "name": "String"
+    },
+    "mark": {},
+    "menu": {
+        "type": "String",
+        "label": "String",
+        "compact": "Boolean"
+    },
+    "meta": {
+        "name": "String",
+        "httpEquiv": "String",
+        "content": "String",
+        "scheme": "String"
+    },
+    "meter": {
+        "value": "Float64",
+        "min": "Float64",
+        "max": "Float64",
+        "low": "Float64",
+        "high": "Float64",
+        "optimum": "Float64"
+    },
+    "nav": {},
+    "noscript": {},
+    "object": {
+        "data": "String",
+        "type": "String",
+        "typeMustMatch": "Boolean",
+        "name": "String",
+        "useMap": "String",
+        "width": "String",
+        "height": "String",
+        "align": "String",
+        "archive": "String",
+        "code": "String",
+        "declare": "Boolean",
+        "hspace": "Uint32",
+        "standby": "String",
+        "vspace": "Uint32",
+        "codeBase": "String",
+        "codeType": "String",
+        "border": "String"
+    },
+    "ol": {
+        "reversed": "Boolean",
+        "start": "Int32",
+        "type": "String",
+        "compact": "Boolean"
+    },
+    "optgroup": {
+        "disabled": "Boolean",
+        "label": "String"
+    },
+    "option": {
+        "disabled": "Boolean",
+        "label": "String",
+        "defaultSelected": "Boolean",
+        "selected": "Boolean",
+        "value": "String",
+        "text": "String"
+    },
+    "output": {
+        "name": "String",
+        "defaultValue": "String",
+        "value": "String"
+    },
+    "p": {
+        "align": "String"
+    },
+    "param": {
+        "name": "String",
+        "value": "String",
+        "type": "String",
+        "valueType": "String"
+    },
+    "pre": {
+        "width": "Int32"
+    },
+    "progress": {
+        "value": "Float64",
+        "max": "Float64"
+    },
+    "q": {
+        "cite": "String"
+    },
+    "rp": {},
+    "rt": {},
+    "ruby": {},
+    "s": {},
+    "samp": {},
+    "script": {
+        "src": "String",
+        "async": "Boolean",
+        "defer": "Boolean",
+        "type": "String",
+        "charset": "String",
+        "text": "String",
+        "event": "String",
+        "htmlFor": "String"
+    },
+    "section": {},
+    "select": {
+        "autofocus": "Boolean",
+        "disabled": "Boolean",
+        "multiple": "Boolean",
+        "name": "String",
+        "required": "Boolean",
+        "size": "Uint32",
+        "length": "Uint32",
+        "selectedIndex": "Int32",
+        "value": "String"
+    },
+    "small": {},
+    "source": {
+        "src": "String",
+        "type": "String",
+        "media": "String"
+    },
+    "span": {},
+    "strong": {},
+    "style": {
+        "disabled": "Boolean",
+        "media": "String",
+        "type": "String",
+        "scoped": "Boolean"
+    },
+    "sub": {},
+    "summary": {},
+    "sup": {},
+    "table": {
+        "caption": "HTMLTableCaptionElement",
+        "tHead": "HTMLTableSectionElement",
+        "tFoot": "HTMLTableSectionElement",
+        "align": "String",
+        "border": "String",
+        "frame": "String",
+        "rules": "String",
+        "summary": "String",
+        "width": "String",
+        "bgColor": "String",
+        "cellPadding": "String",
+        "cellSpacing": "String"
+    },
+    "tbody": {
+        "align": "String",
+        "ch": "String",
+        "chOff": "String",
+        "vAlign": "String"
+    },
+    "td": {
+        "colSpan": "Uint32",
+        "rowSpan": "Uint32",
+        "abbr": "String",
+        "align": "String",
+        "axis": "String",
+        "height": "String",
+        "width": "String",
+        "ch": "String",
+        "chOff": "String",
+        "noWrap": "Boolean",
+        "vAlign": "String",
+        "bgColor": "String"
+    },
+    "textarea": {
+        "autocomplete": "String",
+        "autofocus": "Boolean",
+        "cols": "Uint32",
+        "dirName": "String",
+        "disabled": "Boolean",
+        "inputMode": "String",
+        "maxLength": "Int32",
+        "name": "String",
+        "placeholder": "String",
+        "readOnly": "Boolean",
+        "required": "Boolean",
+        "rows": "Uint32",
+        "wrap": "String",
+        "defaultValue": "String",
+        "value": "String",
+        "selectionStart": "Uint32",
+        "selectionEnd": "Uint32",
+        "selectionDirection": "String"
+    },
+    "tfoot": {
+        "align": "String",
+        "ch": "String",
+        "chOff": "String",
+        "vAlign": "String"
+    },
+    "th": {
+        "colSpan": "Uint32",
+        "rowSpan": "Uint32",
+        "abbr": "String",
+        "align": "String",
+        "axis": "String",
+        "height": "String",
+        "width": "String",
+        "ch": "String",
+        "chOff": "String",
+        "noWrap": "Boolean",
+        "vAlign": "String",
+        "bgColor": "String",
+        "scope": "String"
+    },
+    "thead": {
+        "align": "String",
+        "ch": "String",
+        "chOff": "String",
+        "vAlign": "String"
+    },
+    "time": {
+        "datetime": "String"
+    },
+    "title": {
+        "text": "String"
+    },
+    "tr": {
+        "align": "String",
+        "ch": "String",
+        "chOff": "String",
+        "vAlign": "String",
+        "bgColor": "String"
+    },
+    "track": {
+        "kind": "String",
+        "src": "String",
+        "srclang": "String",
+        "label": "String",
+        "default": "Boolean"
+    },
+    "u": {},
+    "ul": {
+        "compact": "Boolean",
+        "type": "String"
+    },
+    "var": {},
+    "video": {
+        "src": "String",
+        "crossOrigin": "String",
+        "preload": "String",
+        "currentTime": "Float64",
+        "defaultPlaybackRate": "Float64",
+        "playbackRate": "Float64",
+        "autoplay": "Boolean",
+        "loop": "Boolean",
+        "mediaGroup": "String",
+        "controller": "MediaController",
+        "controls": "Boolean",
+        "volume": "Float64",
+        "muted": "Boolean",
+        "defaultMuted": "Boolean",
+        "width": "Uint32",
+        "height": "Uint32",
+        "poster": "String"
+    },
+    "wbr": {}
+}
