@@ -18,7 +18,7 @@ suite('Extract properties', function () {
             key: 'key',
             otherProperty: 'value',
             id: 'id',
-            className: 'className'
+            className: 'className',
         };
         const [props, restOptions] = extractProperties(null, options);
         assert.deepStrictEqual(restOptions, {
@@ -27,7 +27,7 @@ suite('Extract properties', function () {
         });
         assert.deepStrictEqual(props, {
             id: 'id',
-            className: 'className'
+            className: 'className',
         });
     });
 
@@ -36,7 +36,7 @@ suite('Extract properties', function () {
             key: 'key',
             otherProperty: 'value',
             id: 'id',
-            className: 'className'
+            className: 'className',
         };
         const [props, restOptions] = extractProperties('unknown', options);
         assert.deepStrictEqual(restOptions, {
@@ -45,7 +45,7 @@ suite('Extract properties', function () {
         });
         assert.deepStrictEqual(props, {
             id: 'id',
-            className: 'className'
+            className: 'className',
         });
     });
 
@@ -55,7 +55,7 @@ suite('Extract properties', function () {
             otherProperty: 'value',
             id: 'id',
             className: 'className',
-            colSpan: 1
+            colSpan: 1,
         };
         const [props, restOptions] = extractProperties('td', options);
         assert.deepStrictEqual(restOptions, {
@@ -74,7 +74,7 @@ suite('Extract properties', function () {
             key: 'key',
             otherProperty: 'value',
             id: 'id',
-            className: 'className'
+            className: 'className',
         };
         extractProperties(null, deepFreeze(options));
     });

@@ -7,21 +7,21 @@ suite('h', function () {
         assert.deepStrictEqual(
             h({tagName: 'span'}),
             {sel: 'span', data: {}, text: ''},
-        )
+        );
     });
 
     test('selector', function () {
         assert.deepStrictEqual(
             h({selector: 'span#id.class'}),
             {sel: 'span#id.class', data: {}, text: ''},
-        )
+        );
     });
 
     test('tagName and selector', function () {
         assert.deepStrictEqual(
             h({tagName: 'span', selector: '#id.class'}),
             {sel: 'span#id.class', data: {}, text: ''},
-        )
+        );
     });
 
     test('flat properties', function () {

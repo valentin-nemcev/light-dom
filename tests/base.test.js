@@ -7,7 +7,7 @@ suite('Base', function () {
         assert.deepStrictEqual(
             h({selector: 'span#id.class'}),
             {sel: 'span#id.class', data: {}, text: ''},
-        )
+        );
     });
 
     test('key', function () {
@@ -96,8 +96,8 @@ suite('Base', function () {
                 {sel: 'child1'},
                 {sel: 'child2'},
                 {text: 'text2'},
-                {sel: 'child3'} 
-            ]
+                {sel: 'child3'},
+            ],
         });
 
         assert.strictEqual(vnode.children[4], childVnode1);
@@ -124,7 +124,7 @@ suite('Base', function () {
                     'text2',
                     {sel: 'child3'},
                 ],
-            ]
+            ],
         }));
     });
 });
