@@ -1,6 +1,6 @@
 {
   "name": "snabbdom-flat-h",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Virtual DOM helper for snabbdom",
   "main": "h.js",
   "scripts": {
