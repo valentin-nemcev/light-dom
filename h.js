@@ -35,7 +35,13 @@ export function base({selector = '', key, children, ...options}) {
         data: options,
     };
 
-    if (key !== undefined) vnode.key = key;
+    if (key !== undefined) {
+        if (key === null)
+            throw new Error(`Can't use null as key`);
+        if (typeof key !== 'number' && typeof key !== 'string')
+            throw new Error(`Can't use ${typeof key} as key`);
+        vnode.key = key;
+    }
 
     if (Array.isArray(children)) {
         vnode.children = [];

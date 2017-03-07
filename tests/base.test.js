@@ -10,9 +10,24 @@ suite('Base', function () {
         );
     });
 
-    test('key', function () {
-        const key = Symbol('key');
+    test('string key', function () {
+        const key = 'key';
         assert.strictEqual(h({selector: 'span', key}).key, key);
+    });
+
+    test('number key', function () {
+        const key = 1;
+        assert.strictEqual(h({selector: 'span', key}).key, key);
+    });
+
+    test('non-string key', function () {
+        const key = {object: true};
+        assert.throws(() => h({selector: 'span', key}));
+    });
+
+    test('null key', function () {
+        const key = null;
+        assert.throws(() => h({selector: 'span', key}));
     });
 
     test('data values', function () {
@@ -108,7 +123,7 @@ suite('Base', function () {
         h(deepFreeze({
             tagName: 'div',
             selector: '.test',
-            key: {key: 'value'},
+            key: 'key',
             dataObj: {key: 'value'},
             children: [
                 undefined,
