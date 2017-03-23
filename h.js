@@ -29,8 +29,9 @@ function normalizeChildren(children, normalized) {
     }
 }
 
-export function base({selector = '', key, children, ...options}) {
+export function base({tagName, selector = '', key, children, ...options}) {
     const vnode = {
+        tagName: tagName.toLowerCase(),
         sel: selector,
         data: options,
     };
@@ -49,10 +50,15 @@ export function base({selector = '', key, children, ...options}) {
     } else if (children != null && typeof children === 'object') {
         vnode.children = [children];
     } else if (children == null) {
-        vnode.text = '';
+        vnode.children = [];
     } else {
-        vnode.text = String(children);
+        vnode.children = [{text: String(children)}];
     }
+    vnode.childrenMap = new Map();
+    vnode.children.forEach(child => {
+        vnode.childrenMap.set(child, true);
+        // if (child.key != null) vnode.childrenMap.set
+    });
     return vnode;
 }
 
@@ -63,8 +69,11 @@ export default function h({tagName = '', selector = '', ...options}) {
         optionsNestingProps.props =
             Object.assign(props, optionsSansProps.props);
     }
-    optionsNestingProps.selector = tagName + selector;
-    return base(optionsNestingProps);
+    // optionsNestingProps.selector = tagName + selector;
+    //
+    if (tagName === '') tagName = selector.match(/^[^.#]+/)[0];
+
+    return base({tagName, selector, ...optionsNestingProps});
 }
 
 for (const tagName in tagsProperties) {
