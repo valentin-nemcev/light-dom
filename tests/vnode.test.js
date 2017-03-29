@@ -75,9 +75,9 @@ suite('vnode', function () {
     });
 
     test('mixed array children', function () {
-        const childVnode1 = {sel: 'child1'};
-        const childVnode2 = {sel: 'child2'};
-        const childVnode3 = {sel: 'child3'};
+        const childVnode1 = vnode({tagName: 'span'});
+        const childVnode2 = vnode({tagName: 'div'});
+        const childVnode3 = vnode({tagName: 'ul'});
         const n = vnode({tagName: 'div', children: [
             undefined,
             null,
@@ -101,10 +101,10 @@ suite('vnode', function () {
                 {text: '123'},
                 {text: ''},
                 {text: 'text1'},
-                {sel: 'child1'},
-                {sel: 'child2'},
+                {tagName: 'span', data: {}, children: []},
+                {tagName: 'div', data: {}, children: []},
                 {text: 'text2'},
-                {sel: 'child3'},
+                {tagName: 'ul', data: {}, children: []},
             ],
         });
 

@@ -1,50 +1,60 @@
-function normalizeChildren(children, normalized) {
-    for (const child of children) {
-        if (Array.isArray(child)) {
-            normalizeChildren(child, normalized);
-        } else if (child != null) {
-            normalized.push(
-                typeof child === 'object' ? child : {text: String(child)}
-            );
-        } // else skip
+class VTextNode {
+    constructor({text}) {
+        this.text = String(text);
+    }
+
+    toJSON() {
+        return {text: this.text};
     }
 }
 
-export default function vnode({tagName, key, children, ...options}) {
-    const vnode = {
-        tagName: tagName.toLowerCase(),
-        data: options,
-    };
+class VNode {
+    constructor({tagName, key, children, ...options}) {
+        this.tagName = tagName.toLowerCase();
+        this.data = options;
 
-    if (key !== undefined) {
-        if (key === null)
-            throw new Error("Can't use null as key");
-        if (typeof key !== 'number' && typeof key !== 'string')
-            throw new Error(`Can't use ${typeof key} as key`);
-        vnode.key = key;
+        if (key !== undefined) {
+            if (key === null)
+                throw new Error("Can't use null as key");
+            if (typeof key !== 'number' && typeof key !== 'string')
+                throw new Error(`Can't use ${typeof key} as key`);
+            this.key = key;
+        }
+
+        this.children = [];
+        this._normalizeChildren(children);
+
+        this.childrenMap = new Map();
+        this.children.forEach(child => {
+            this.childrenMap.set(child, true);
+        });
     }
 
-    if (Array.isArray(children)) {
-        vnode.children = [];
-        normalizeChildren(children, vnode.children);
-    } else if (children != null && typeof children === 'object') {
-        vnode.children = [children];
-    } else if (children == null) {
-        vnode.children = [];
-    } else {
-        vnode.children = [{text: String(children)}];
+    _normalizeChildren(children) {
+        for (const child of Array.isArray(children) ? children : [children]) {
+            if (Array.isArray(child)) {
+                this._normalizeChildren(child);
+            } else if (child != null) {
+                this.children.push(
+                    typeof child === 'object'
+                        ? child
+                        : new VTextNode({text: child})
+                );
+            } // else skip
+        }
     }
-    vnode.childrenMap = new Map();
-    vnode.children.forEach(child => {
-        vnode.childrenMap.set(child, true);
-        // if (child.key != null) vnode.childrenMap.set
-    });
-    vnode.toJSON = function () {
+
+
+    toJSON() {
         const json = {};
-        ['tagName', 'key', 'data', 'children'].forEach(
+        ['tagName', 'key', 'data'].forEach(
             k => { if (k in this) json[k] = this[k]; }
         );
+        json.children = this.children.map(c => c.toJSON());
         return json;
-    };
-    return vnode;
+    }
+}
+
+export default function vnode(params) {
+    return new VNode(params);
 }
