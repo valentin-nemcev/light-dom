@@ -1,38 +1,31 @@
 import assert from 'assert';
 import deepFreeze from 'deep-freeze-strict';
-import {base as h} from '../h';
+import vnode from '../vnode';
 
-suite('Base', function () {
-    test('selector', function () {
-        assert.deepStrictEqual(
-            h({selector: 'span#id.class'}),
-            {sel: 'span#id.class', data: {}, text: ''},
-        );
-    });
-
+suite('vnode', function () {
     test('string key', function () {
         const key = 'key';
-        assert.strictEqual(h({selector: 'span', key}).key, key);
+        assert.strictEqual(vnode({tagName: 'span', key}).key, key);
     });
 
     test('number key', function () {
         const key = 1;
-        assert.strictEqual(h({selector: 'span', key}).key, key);
+        assert.strictEqual(vnode({tagName: 'span', key}).key, key);
     });
 
     test('non-string key', function () {
         const key = {object: true};
-        assert.throws(() => h({selector: 'span', key}));
+        assert.throws(() => vnode({tagName: 'span', key}));
     });
 
     test('null key', function () {
         const key = null;
-        assert.throws(() => h({selector: 'span', key}));
+        assert.throws(() => vnode({tagName: 'span', key}));
     });
 
     test('data values', function () {
         assert.deepStrictEqual(
-            h({selector: 'span', dataStr: 'str', dataNull: null}).data,
+            vnode({tagName: 'span', dataStr: 'str', dataNull: null}).data,
             {dataStr: 'str', dataNull: null}
         );
     });
@@ -40,52 +33,52 @@ suite('Base', function () {
     test('data objects', function () {
         const dataObj = {key: 'value'};
         assert.strictEqual(
-            h({selector: 'span', dataObj}).data.dataObj,
+            vnode({tagName: 'span', dataObj}).data.dataObj,
             dataObj
         );
     });
 
     test('text children', function () {
         assert.deepStrictEqual(
-            h({selector: 'span', children: 'text'}),
-            {sel: 'span', data: {}, text: 'text'}
+            vnode({tagName: 'span', children: 'text'}).toJSON(),
+            {tagName: 'span', data: {}, children: [{text: 'text'}]}
         );
     });
 
     test('numeric children', function () {
         assert.deepStrictEqual(
-            h({selector: 'span', children: 123}),
-            {sel: 'span', data: {}, text: '123'}
+            vnode({tagName: 'span', children: 123}).toJSON(),
+            {tagName: 'span', data: {}, children: [{text: '123'}]}
         );
     });
 
     test('boolean children', function () {
         assert.deepStrictEqual(
-            h({selector: 'span', children: false}),
-            {sel: 'span', data: {}, text: 'false'}
+            vnode({tagName: 'span', children: false}).toJSON(),
+            {tagName: 'span', data: {}, children: [{text: 'false'}]}
         );
     });
 
     test('null children', function () {
         assert.deepStrictEqual(
-            h({selector: 'span', children: null}),
-            {sel: 'span', data: {}, text: ''}
+            vnode({tagName: 'span', children: null}).toJSON(),
+            {tagName: 'span', data: {}, children: []}
         );
     });
 
     test('vnode children', function () {
         const childVnode = {};
-        const vnode = h({selector: 'span', children: childVnode});
-        assert.strictEqual(vnode.children.length, 1);
-        assert.strictEqual(vnode.children[0], childVnode);
-        assert.strictEqual('text' in vnode, false);
+        const n = vnode({tagName: 'span', children: childVnode});
+        assert.strictEqual(n.children.length, 1);
+        assert.strictEqual(n.children[0], childVnode);
+        assert.strictEqual('text' in n, false);
     });
 
     test('mixed array children', function () {
         const childVnode1 = {sel: 'child1'};
         const childVnode2 = {sel: 'child2'};
         const childVnode3 = {sel: 'child3'};
-        const vnode = h({selector: 'div', children: [
+        const n = vnode({tagName: 'div', children: [
             undefined,
             null,
             false,
@@ -100,8 +93,8 @@ suite('Base', function () {
                 childVnode3,
             ],
         ]});
-        assert.deepStrictEqual(vnode, {
-            sel: 'div',
+        assert.deepStrictEqual(n.toJSON(), {
+            tagName: 'div',
             data: {},
             children: [
                 {text: 'false'},
@@ -115,14 +108,13 @@ suite('Base', function () {
             ],
         });
 
-        assert.strictEqual(vnode.children[4], childVnode1);
-        assert.strictEqual(vnode.children[5], childVnode2);
+        assert.strictEqual(n.children[4], childVnode1);
+        assert.strictEqual(n.children[5], childVnode2);
     });
 
     test('options object is not mutated', function () {
-        h(deepFreeze({
+        vnode(deepFreeze({
             tagName: 'div',
-            selector: '.test',
             key: 'key',
             dataObj: {key: 'value'},
             children: [

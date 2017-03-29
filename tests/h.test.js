@@ -5,36 +5,26 @@ import h from '../h';
 suite('h', function () {
     test('tagName', function () {
         assert.deepStrictEqual(
-            h({tagName: 'span'}),
-            {sel: 'span', data: {}, text: ''},
-        );
-    });
-
-    test('selector', function () {
-        assert.deepStrictEqual(
-            h({selector: 'span#id.class'}),
-            {sel: 'span#id.class', data: {}, text: ''},
-        );
-    });
-
-    test('tagName and selector', function () {
-        assert.deepStrictEqual(
-            h({tagName: 'span', selector: '#id.class'}),
-            {sel: 'span#id.class', data: {}, text: ''},
+            h({tagName: 'span'}).toJSON(),
+            {tagName: 'span', data: {}, children: []},
         );
     });
 
     test('flat properties', function () {
         assert.deepStrictEqual(
-            h({tagName: 'td', colSpan: 1}),
-            {sel: 'td', data: {props: {colSpan: 1}}, text: ''}
+            h({tagName: 'td', colSpan: 1}).toJSON(),
+            {tagName: 'td', data: {props: {colSpan: 1}}, children: []}
         );
     });
 
     test('flat and nested properties', function () {
         assert.deepStrictEqual(
-            h({tagName: 'td', colSpan: 1, props: {colSpan: 2, id: 'id'}}),
-            {sel: 'td', data: {props: {id: 'id', colSpan: 2}}, text: ''}
+            h({
+                tagName: 'td',
+                colSpan: 1,
+                props: {colSpan: 2, id: 'id'},
+            }).toJSON(),
+            {tagName: 'td', data: {props: {id: 'id', colSpan: 2}}, children: []}
         );
     });
 
@@ -46,12 +36,17 @@ suite('h', function () {
 
     test('tag shorthand function', function () {
         assert.deepStrictEqual(
-            h.td({selector: '.test', colSpan: 1, children: 'str'}),
-            {sel: 'td.test', data: {props: {colSpan: 1}}, text: 'str'}
+            h.td({key: 'test', colSpan: 1, children: 'str'}).toJSON(),
+            {
+                tagName: 'td',
+                key: 'test',
+                data: {props: {colSpan: 1}},
+                children: [{text: 'str'}],
+            }
         );
     });
 
     test('tag shorthand function options object is not mutated', function () {
-        h.td(deepFreeze({selector: '.test', colSpan: 1, children: 'str'}));
+        h.td(deepFreeze({key: 'test', colSpan: 1, children: 'str'}));
     });
 });
