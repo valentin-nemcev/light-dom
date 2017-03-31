@@ -1,5 +1,21 @@
-class VTextNode {
+import assert from 'assert';
+
+class VNodeBase {
+    constructor() {
+        this.isVNode = true;
+    }
+
+    setElement(element) {
+        assert(this.elm == null);
+        this.elm = element;
+        return this;
+    }
+
+}
+
+class VTextNode extends VNodeBase {
     constructor({text}) {
+        super();
         this.text = String(text);
     }
 
@@ -8,8 +24,10 @@ class VTextNode {
     }
 }
 
-class VNode {
+class VNode extends VNodeBase {
     constructor({tagName, key, children, ...options}) {
+        super();
+
         this.tagName = tagName.toLowerCase();
         this.data = options;
 
@@ -44,7 +62,6 @@ class VNode {
         }
     }
 
-
     toJSON() {
         const json = {};
         ['tagName', 'key', 'data'].forEach(
@@ -56,5 +73,13 @@ class VNode {
 }
 
 export default function vnode(params) {
-    return new VNode(params);
+    return params.tagName != null ? new VNode(params) : new VTextNode(params);
+}
+
+export function fromElement(elm) {
+    if (elm instanceof window.HTMLElement) {
+        return new VNode({tagName: elm.tagName}).setElement(elm);
+    } else if (elm instanceof window.Text) {
+        return new VTextNode({text: elm.nodeValue}).setElement(elm);
+    }
 }

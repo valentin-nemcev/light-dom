@@ -19,7 +19,7 @@ function isEmptyObject(object) {
 }
 
 
-export default function h({tagName = '', ...options}) {
+export default function h({tagName, ...options}) {
     const [props, optionsSansProps] = extractProperties(tagName, options);
     const optionsNestingProps = optionsSansProps;
     if (!isEmptyObject(props)) {

@@ -38,6 +38,13 @@ suite('vnode', function () {
         );
     });
 
+    test('text nodes', function () {
+        assert.deepStrictEqual(
+            vnode({text: 'str'}).toJSON(),
+            {text: 'str'}
+        );
+    });
+
     test('text children', function () {
         assert.deepStrictEqual(
             vnode({tagName: 'span', children: 'text'}).toJSON(),
