@@ -46,6 +46,19 @@ function replaceWith(elm, newElm) {
     if (elm.parentNode) elm.parentNode.replaceChild(newElm, elm);
 }
 
+function insertAfter(elm, parentElm, afterNode) {
+    const beforeNode = afterNode
+        ? afterNode.nextSibling
+        : parentElm.firstChild;
+    if (beforeNode !== elm) {
+        if (beforeNode) {
+            parentElm.insertBefore(elm, beforeNode);
+        } else {
+            parentElm.appendChild(elm);
+        }
+    }
+}
+
 function patch(oldNode, newNode) {
 
     const elm = oldNode.elm;
@@ -98,17 +111,10 @@ function patchElement(oldNode, newNode) {
         }
 
         if (newChNode) {
-            const refNode = prevEl ? prevEl.nextSibling : elm.firstChild;
-            if (refNode !== newChNode.elm) {
-                if (refNode) {
-                    elm.insertBefore(newChNode.elm, refNode);
-                } else {
-                    elm.appendChild(newChNode.elm);
-                }
-                const insertHook =
-                    ((newChNode.data || {}).hook || {}).insert;
-                insertHook && insertHook(newChNode);
-            }
+            insertAfter(newChNode.elm, elm, prevEl);
+            const insertHook =
+                ((newChNode.data || {}).hook || {}).insert;
+            insertHook && insertHook(newChNode);
             prevEl = newChNode.elm;
         }
     }

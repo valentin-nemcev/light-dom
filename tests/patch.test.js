@@ -91,4 +91,87 @@ suite('patch', function () {
             assert.notStrictEqual(div, text);
         });
     });
+
+    suite('Node children', function () {
+        let div;
+        setup(function () {
+            div = document.createElement('div');
+        });
+
+        test('Add children', function () {
+            const vnode1 = h.div({children: []});
+            const vnode2 = h.div({children: [
+                h.span({children: 'span'}),
+                'text',
+                h.div({children: 'div'}),
+            ]});
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+            assert.strictEqual(
+                div.innerHTML,
+                '<span>span</span>text<div>div</div>'
+            );
+        });
+
+        test('Remove children', function () {
+            const vnode1 = h.div({children: [
+                h.span({children: 'span'}),
+                'text',
+                h.div({children: 'div'}),
+            ]});
+            const vnode2 = h.div({children: []});
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+            assert.strictEqual(div.innerHTML, '');
+        });
+
+        test('Replace children', function () {
+            const vnode1 = h.div({children: [
+                'text',
+                h.div({children: 'div'}),
+                h.span({children: 'span'}),
+                h.div({children: 'div', id: 1}),
+            ]});
+            const vnode2 = h.div({children: [
+                h.span({children: 'span'}),
+                'text',
+                h.div({children: 'div'}),
+                h.div({children: 'div', id: 2}),
+            ]});
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+            assert.strictEqual(
+                div.innerHTML,
+                '<span>span</span>text<div>div</div><div id="2">div</div>'
+            );
+        });
+
+        test('Rearrange cached children', function () {
+            const children = [];
+            for (let i = 0; i < 5; i++) children.push(h.div({children: i}));
+            const [child0, child1, child2, child3, child4] = children;
+            const vnode1 = h.div({children: [
+                child0, child1, child2, child3,
+            ]});
+            const vnode2 = h.div({children: [
+                child4, child3, child1, child2,
+            ]});
+            patch(div, vnode1);
+            const [, el1, el2, el3] = div.children;
+
+            patch(vnode1, vnode2);
+            const [, newEl3, newEl1, newEl2] = div.children;
+            assert.strictEqual(
+                div.innerHTML,
+                '<div>4</div><div>3</div><div>1</div><div>2</div>'
+            );
+
+            assert.strictEqual(el1, newEl1);
+            assert.strictEqual(el2, newEl2);
+            assert.strictEqual(el3, newEl3);
+        });
+    });
 });
