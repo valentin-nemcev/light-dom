@@ -1,2 +1,2 @@
-# snabbdom-flat-h
-Virtual DOM helper for snabbdom
+# Light dom
+Virtual DOM
