@@ -1,7 +1,7 @@
 {
-  "name": "snabbdom-flat-h",
+  "name": "light-dom",
   "version": "2.0.0",
-  "description": "Virtual DOM helper for snabbdom",
+  "description": "Virtual DOM",
   "main": "h.js",
   "scripts": {
     "test": "mocha --ui tdd --require babel-register tests/*.test.js",
