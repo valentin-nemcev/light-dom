@@ -19,7 +19,8 @@ function isEmptyObject(object) {
 }
 
 
-export default function h({tagName, ...options}) {
+export default function h({tagName, selector, ...options}) {
+    if (selector !== undefined) throw new Error('Selector is deprecated');
     const [props, optionsSansProps] = extractProperties(tagName, options);
     const optionsNestingProps = optionsSansProps;
     if (!isEmptyObject(props)) {

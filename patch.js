@@ -7,6 +7,7 @@ function ensureVNode(node) {
 }
 
 export default function initialPatch(oldNode, newNode) {
+    if (newNode == null) return;
     if (oldNode != null) {
         return patch(ensureVNode(oldNode), newNode);
     } else {
