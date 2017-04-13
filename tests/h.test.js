@@ -49,4 +49,28 @@ suite('h', function () {
     test('tag shorthand function options object is not mutated', function () {
         h.td(deepFreeze({key: 'test', colSpan: 1, children: 'str'}));
     });
+
+    test('className and classToggle', function () {
+        assert.deepStrictEqual(
+            h.span({
+                className: ['base1 test1', 'test2', 'test3'],
+                classToggle: {
+                    test3: false,
+                    test4: true,
+                    'base2 test5': true,
+                    'base2 test6': false,
+                },
+            }).toJSON().class,
+            {
+                base1: true,
+                test1: true,
+                test2: true,
+                test3: true,
+                test4: true,
+                base2: true,
+                test5: true,
+                test6: false,
+            }
+        );
+    });
 });

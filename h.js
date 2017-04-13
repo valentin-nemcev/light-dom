@@ -13,22 +13,48 @@ export function extractProperties(tagName, options) {
     return [props, restOptions];
 }
 
+function setClass(classObj, name, value) {
+    name && name.split(' ').forEach(n => (classObj[n] = classObj[n] || value));
+}
+
+
+function normalizeClass(className = [], classToggle = {}) {
+    const classObj = {};
+    Object.keys(classToggle)
+        .forEach(c => setClass(classObj, c, !!classToggle[c]));
+    className.forEach(c => setClass(classObj, c, true));
+    return classObj;
+}
+
 function isEmptyObject(object) {
     for (const key in object) return false;
     return true;
 }
 
 
-export default function h({tagName, selector, ...options}) {
+export default function h({
+    tagName,
+    selector,
+    className,
+    classToggle,
+    ...options
+}) {
     if (selector !== undefined) throw new Error('Selector is deprecated');
+
     const [props, optionsSansProps] = extractProperties(tagName, options);
-    const optionsNestingProps = optionsSansProps;
+    options = optionsSansProps;
     if (!isEmptyObject(props)) {
-        optionsNestingProps.props =
+        options.props =
             Object.assign(props, optionsSansProps.props);
     }
 
-    return vnode({tagName, ...optionsNestingProps});
+    const classObj = normalizeClass(className, classToggle);
+    if (!isEmptyObject(classObj)) {
+        if (options.class == null) options.class = {};
+        Object.assign(options.class, classObj);
+    }
+
+    return vnode({tagName, ...options});
 }
 
 for (const tagName in tagsProperties) {
