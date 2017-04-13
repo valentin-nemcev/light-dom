@@ -19,6 +19,10 @@ class VTextNode extends VNodeBase {
         this.text = String(text);
     }
 
+    createEmptyCopy() {
+        return new VTextNode({text: ''});
+    }
+
     toJSON() {
         return {text: this.text};
     }
@@ -29,7 +33,7 @@ class VNode extends VNodeBase {
         super();
 
         this.tagName = tagName.toLowerCase();
-        this.data = options;
+        Object.assign(this, options);
 
         if (key !== undefined) {
             if (key === null)
@@ -48,6 +52,10 @@ class VNode extends VNodeBase {
         });
     }
 
+    createEmptyCopy() {
+        return new VNode({tagName: this.tagName});
+    }
+
     _normalizeChildren(children) {
         for (const child of Array.isArray(children) ? children : [children]) {
             if (Array.isArray(child)) {
@@ -63,9 +71,9 @@ class VNode extends VNodeBase {
     }
 
     toJSON() {
-        const json = {};
-        ['tagName', 'key', 'data'].forEach(
-            k => { if (k in this) json[k] = this[k]; }
+        const json = {...this};
+        ['childrenMap', 'isVNode'].forEach(
+            k => delete json[k]
         );
         json.children = this.children.map(c => c.toJSON());
         return json;

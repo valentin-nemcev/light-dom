@@ -6,14 +6,14 @@ suite('h', function () {
     test('tagName', function () {
         assert.deepStrictEqual(
             h({tagName: 'span'}).toJSON(),
-            {tagName: 'span', data: {}, children: []},
+            {tagName: 'span', children: []},
         );
     });
 
     test('flat properties', function () {
         assert.deepStrictEqual(
             h({tagName: 'td', colSpan: 1}).toJSON(),
-            {tagName: 'td', data: {props: {colSpan: 1}}, children: []}
+            {tagName: 'td', props: {colSpan: 1}, children: []}
         );
     });
 
@@ -24,7 +24,7 @@ suite('h', function () {
                 colSpan: 1,
                 props: {colSpan: 2, id: 'id'},
             }).toJSON(),
-            {tagName: 'td', data: {props: {id: 'id', colSpan: 2}}, children: []}
+            {tagName: 'td', props: {id: 'id', colSpan: 2}, children: []}
         );
     });
 
@@ -40,7 +40,7 @@ suite('h', function () {
             {
                 tagName: 'td',
                 key: 'test',
-                data: {props: {colSpan: 1}},
+                props: {colSpan: 1},
                 children: [{text: 'str'}],
             }
         );

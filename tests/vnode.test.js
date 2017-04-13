@@ -25,15 +25,15 @@ suite('vnode', function () {
 
     test('data values', function () {
         assert.deepStrictEqual(
-            vnode({tagName: 'span', dataStr: 'str', dataNull: null}).data,
-            {dataStr: 'str', dataNull: null}
+            vnode({tagName: 'span', dataStr: 'str', dataNull: null}).toJSON(),
+            {tagName: 'span', dataStr: 'str', dataNull: null, children: []}
         );
     });
 
     test('data objects', function () {
         const dataObj = {key: 'value'};
         assert.strictEqual(
-            vnode({tagName: 'span', dataObj}).data.dataObj,
+            vnode({tagName: 'span', dataObj}).toJSON().dataObj,
             dataObj
         );
     });
@@ -48,28 +48,28 @@ suite('vnode', function () {
     test('text children', function () {
         assert.deepStrictEqual(
             vnode({tagName: 'span', children: 'text'}).toJSON(),
-            {tagName: 'span', data: {}, children: [{text: 'text'}]}
+            {tagName: 'span', children: [{text: 'text'}]}
         );
     });
 
     test('numeric children', function () {
         assert.deepStrictEqual(
             vnode({tagName: 'span', children: 123}).toJSON(),
-            {tagName: 'span', data: {}, children: [{text: '123'}]}
+            {tagName: 'span', children: [{text: '123'}]}
         );
     });
 
     test('boolean children', function () {
         assert.deepStrictEqual(
             vnode({tagName: 'span', children: false}).toJSON(),
-            {tagName: 'span', data: {}, children: [{text: 'false'}]}
+            {tagName: 'span', children: [{text: 'false'}]}
         );
     });
 
     test('null children', function () {
         assert.deepStrictEqual(
             vnode({tagName: 'span', children: null}).toJSON(),
-            {tagName: 'span', data: {}, children: []}
+            {tagName: 'span', children: []}
         );
     });
 
@@ -102,16 +102,15 @@ suite('vnode', function () {
         ]});
         assert.deepStrictEqual(n.toJSON(), {
             tagName: 'div',
-            data: {},
             children: [
                 {text: 'false'},
                 {text: '123'},
                 {text: ''},
                 {text: 'text1'},
-                {tagName: 'span', data: {}, children: []},
-                {tagName: 'div', data: {}, children: []},
+                {tagName: 'span', children: []},
+                {tagName: 'div', children: []},
                 {text: 'text2'},
-                {tagName: 'ul', data: {}, children: []},
+                {tagName: 'ul', children: []},
             ],
         });
 

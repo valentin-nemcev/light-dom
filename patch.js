@@ -3,34 +3,20 @@ import assert from 'assert';
 import {fromElement} from './vnode';
 
 function ensureVNode(node) {
-    return node.isVNode ? node : fromElement(node);
+    return node == null || node.isVNode ? node : fromElement(node);
 }
 
 export default function initialPatch(oldNode, newNode) {
     if (newNode == null) return;
-    if (oldNode != null) {
-        return patch(ensureVNode(oldNode), newNode);
-    } else {
-        return patch(newVNode(newNode), newNode);
-    }
+    return patch(ensureVNode(oldNode), newNode);
 }
 
-function newVNode(vNode) {
-    if (vNode.tagName != null) {
-        return {
-            tagName: vNode.tagName,
-            key: vNode.key,
-            elm: vNode.elm || document.createElement(vNode.tagName),
-            data: {},
-            childrenMap: new Map(),
-            children: [],
-        };
-    } else {
-        return {
-            text: '',
-            elm: vNode.elm || document.createTextNode(''),
-        };
-    }
+function newVNodeWithElement(vNode) {
+    return vNode.createEmptyCopy().setElement(vNode.elm
+        || vNode.tagName != null
+        ? document.createElement(vNode.tagName)
+        : document.createTextNode('')
+    );
 }
 
 function patchObject(oldObj = {}, newObj = {}, set) {
@@ -62,6 +48,8 @@ function insertAfter(elm, parentElm, afterNode) {
 
 function patch(oldNode, newNode) {
 
+    if (oldNode == null) oldNode = newVNodeWithElement(newNode);
+
     const elm = oldNode.elm;
     assert(elm != null, 'No element to patch');
 
@@ -70,7 +58,7 @@ function patch(oldNode, newNode) {
     }
 
     if (oldNode.tagName !== newNode.tagName || oldNode.key !== newNode.key) {
-        const newElm = patch(newVNode(newNode), newNode);
+        const newElm = patch(null, newNode);
         replaceWith(elm, newElm);
         return newElm;
     }
@@ -108,39 +96,39 @@ function patchElement(oldNode, newNode) {
         } else if (shouldRemoveOld) {
             oldChNode.elm.remove();
         } else if (shouldInsertNew) {
-            patch(newVNode(newChNode), newChNode);
+            patch(null, newChNode);
         }
 
         if (newChNode) {
             insertAfter(newChNode.elm, elm, prevEl);
             const insertHook =
-                ((newChNode.data || {}).hook || {}).insert;
+                (newChNode.hook || {}).insert;
             insertHook && insertHook(newChNode);
             prevEl = newChNode.elm;
         }
     }
 
-    patchObject(oldNode.data.class, newNode.data.class,
+    patchObject(oldNode.class, newNode.class,
         (name, oldValue, newValue) => elm.classList.toggle(name, newValue)
     );
-    patchObject(oldNode.data.props, newNode.data.props,
+    patchObject(oldNode.props, newNode.props,
         (name, oldValue, newValue) => {
             if (newValue !== undefined) elm[name] = newValue;
             else delete elm[name];
         }
     );
-    patchObject(oldNode.data.on, newNode.data.on,
+    patchObject(oldNode.on, newNode.on,
         (name, oldHandler, newHandler) => {
             if (oldHandler) elm.removeEventListener(name, oldHandler);
             if (newHandler) elm.addEventListener(name, newHandler);
         }
     );
-    patchObject(oldNode.data.style, newNode.data.style,
+    patchObject(oldNode.style, newNode.style,
         (name, oldValue, newValue) => {
             elm.style[name] = newValue != null ? newValue : '';
         }
     );
 
-    const updateHook = (newNode.data.hook || {}).update;
+    const updateHook = (newNode.hook || {}).update;
     updateHook && updateHook(oldNode, newNode);
 }
