@@ -1,6 +1,15 @@
 import tagsProperties from './tagsProperties.json';
 import vnode from './vnode';
 
+function isObject(val) {
+    return typeof val === 'object' && val != null;
+}
+
+function isEmptyObject(object) {
+    for (const key in object) return false;
+    return true;
+}
+
 export function extractProperties(tagName, options) {
     const props = {};
     const restOptions = {};
@@ -18,17 +27,27 @@ function setClass(classObj, name, value) {
 }
 
 
-function normalizeClass(className = [], classToggle = {}) {
+function normalizeClass(...args) {
     const classObj = {};
-    Object.keys(classToggle)
-        .forEach(c => setClass(classObj, c, !!classToggle[c]));
-    className.forEach(c => setClass(classObj, c, true));
+    args.forEach(arg => {
+        if (isObject(arg)) {
+            Object.keys(arg)
+                .forEach(c => setClass(classObj, c, !!arg[c]));
+        } else {
+            setClass(classObj, arg, true);
+        }
+    });
     return classObj;
 }
 
-function isEmptyObject(object) {
-    for (const key in object) return false;
-    return true;
+export {normalizeClass as c};
+
+export function toggleClasses(classes, toggles) {
+    const result = {};
+    for (const t in toggles) {
+        if (t in classes) result[classes[t]] = toggles[t];
+    }
+    return result;
 }
 
 

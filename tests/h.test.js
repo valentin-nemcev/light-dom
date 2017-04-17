@@ -1,6 +1,6 @@
 import assert from 'assert';
 import deepFreeze from 'deep-freeze-strict';
-import h from '../h';
+import h, {c, toggleClasses} from '../h';
 
 suite('h', function () {
     test('tagName', function () {
@@ -49,28 +49,43 @@ suite('h', function () {
     test('tag shorthand function options object is not mutated', function () {
         h.td(deepFreeze({key: 'test', colSpan: 1, children: 'str'}));
     });
+});
 
-    test('className and classToggle', function () {
-        assert.deepStrictEqual(
-            h.span({
-                className: ['base1 test1', 'test2', 'test3'],
-                classToggle: {
-                    test3: false,
-                    test4: true,
-                    'base2 test5': true,
-                    'base2 test6': false,
-                },
-            }).toJSON().class,
-            {
-                base1: true,
-                test1: true,
-                test2: true,
-                test3: true,
-                test4: true,
-                base2: true,
-                test5: true,
-                test6: false,
-            }
-        );
-    });
+test('c', function () {
+    assert.deepStrictEqual(
+        c('base1 test1', 'test2', 'test3', {
+            test3: false,
+            test4: true,
+            'base2 test5': true,
+            'base2 test6': false,
+        }),
+        {
+            base1: true,
+            test1: true,
+            test2: true,
+            test3: true,
+            test4: true,
+            base2: true,
+            test5: true,
+            test6: false,
+        }
+    );
+});
+
+test('toggleClasses', function () {
+    assert.deepStrictEqual(
+        toggleClasses({
+            class1: '__class1',
+            class2: '__class2',
+            class3: '__class3',
+            class4: '__class4',
+        }, {
+            class1: true,
+            class3: false,
+        }),
+        {
+            __class1: true,
+            __class3: false,
+        }
+    );
 });
