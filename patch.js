@@ -13,7 +13,7 @@ export default function initialPatch(oldNode, newNode) {
 
 function newVNodeWithElement(vNode) {
     return vNode.createEmptyCopy().setElement(vNode.elm
-        || vNode.tagName != null
+        || vNode.isElementNode
         ? document.createElement(vNode.tagName)
         : document.createTextNode('')
     );
@@ -57,7 +57,7 @@ function patch(oldNode, newNode) {
         return elm;
     }
 
-    if (oldNode.tagName !== newNode.tagName || oldNode.key !== newNode.key) {
+    if (!oldNode.canBeUpdatedBy(newNode)) {
         const newElm = patch(null, newNode);
         replaceWith(elm, newElm);
         return newElm;
@@ -65,7 +65,7 @@ function patch(oldNode, newNode) {
 
     newNode.elm = elm;
 
-    if (newNode.tagName != null) {
+    if (newNode.isElementNode) {
         patchElement(oldNode, newNode);
     } else {
         if (oldNode.text !== newNode.text) {

@@ -36,6 +36,12 @@ suite('patch', function () {
             assert.strictEqual(div.outerHTML, '<div id="id">test</div>');
         });
 
+        test('initial new node patch with key', function () {
+            const vnode = h({tagName: 'div', key: 'key', children: 'test'});
+            const div = patch(null, vnode);
+            assert.strictEqual(div.outerHTML, '<div>test</div>');
+        });
+
         test('initial existing node patch', function () {
             const div = document.createElement('div');
             const vnode = h({

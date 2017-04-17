@@ -10,10 +10,11 @@ class VNodeBase {
         this.elm = element;
         return this;
     }
-
 }
 
 class VTextNode extends VNodeBase {
+    get isTextNode() { return true; }
+
     constructor({text}) {
         super();
         this.text = String(text);
@@ -26,9 +27,15 @@ class VTextNode extends VNodeBase {
     toJSON() {
         return {text: this.text};
     }
+
+    canBeUpdatedBy(node) {
+        return node.isTextNode;
+    }
 }
 
 class VNode extends VNodeBase {
+    get isElementNode() { return true; }
+
     constructor({tagName, key, children, ...options}) {
         super();
 
@@ -53,7 +60,13 @@ class VNode extends VNodeBase {
     }
 
     createEmptyCopy() {
-        return new VNode({tagName: this.tagName});
+        return new VNode({tagName: this.tagName, key: this.key});
+    }
+
+    canBeUpdatedBy(node) {
+        return node.isElementNode
+            && this.tagName === node.tagName
+            && this.key === node.key;
     }
 
     _normalizeChildren(children) {
