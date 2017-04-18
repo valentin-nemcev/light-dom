@@ -1,12 +1,12 @@
-import assert from 'assert';
-
 class VNodeBase {
     constructor() {
         this.isVNode = true;
     }
 
     setElement(element) {
-        assert(this.elm == null);
+        if (this.elm != null) {
+            throw new Error("Can't overwrite element");
+        }
         this.elm = element;
         return this;
     }
@@ -57,6 +57,9 @@ class VNode extends VNodeBase {
         this.children.forEach(child => {
             this.childrenMap.set(child, true);
         });
+        if (this.childrenMap.size < this.children.length) {
+            throw new Error('Child VNode used more than once');
+        }
     }
 
     createEmptyCopy() {

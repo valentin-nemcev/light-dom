@@ -133,7 +133,7 @@ suite('patch', function () {
             assert.strictEqual(div.innerHTML, '');
         });
 
-        test('Replace children', function () {
+        test('Replace multiple children', function () {
             const vnode1 = h.div({children: [
                 'text',
                 h.div({children: 'div'}),
@@ -178,6 +178,34 @@ suite('patch', function () {
             assert.strictEqual(el1, newEl1);
             assert.strictEqual(el2, newEl2);
             assert.strictEqual(el3, newEl3);
+        });
+
+        test('Duplicated children', function () {
+            const ch = h.div({children: 'div'});
+            assert.throws(() => {
+                const vnode1 = h.div({children: [
+                    ch,
+                    'text',
+                    ch,
+                ]});
+                patch(div, vnode1);
+            },
+                'Child VNode used more than once',
+            );
+        });
+
+        test('Duplicated siblings', function () {
+            const ch = h.div({children: 'div'});
+            const vnode1 = h.div({children: [
+                h.div({children: [ch]}),
+                'text',
+                h.div({children: [ch]}),
+            ]});
+            assert.throws(
+                () => patch(div, vnode1),
+                // /element already inserted/i
+                /can't overwrite element/i
+            );
         });
     });
 });
