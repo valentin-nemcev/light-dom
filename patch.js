@@ -11,12 +11,14 @@ export default function initialPatch(oldNode, newNode) {
     return patch(ensureVNode(oldNode), newNode);
 }
 
-function newVNodeWithElement(vNode) {
-    return vNode.createEmptyCopy().setElement(vNode.elm
-        || vNode.isElementNode
-        ? document.createElement(vNode.tagName)
-        : document.createTextNode('')
-    );
+function ensureVNodeWithElement(vNode) {
+    return vNode.elm == null
+        ? vNode.createEmptyCopy().setElement(vNode.elm
+            || vNode.isElementNode
+            ? document.createElement(vNode.tagName)
+            : document.createTextNode('')
+        )
+        : vNode;
 }
 
 function diffObject(oldObj = {}, newObj = {}, set) {
@@ -52,7 +54,7 @@ function insertElement(elm, parentElm, afterNode) {
 
 function patch(oldNode, newNode) {
 
-    if (oldNode == null) oldNode = newVNodeWithElement(newNode);
+    if (oldNode == null) oldNode = ensureVNodeWithElement(newNode);
 
     const elm = oldNode.elm;
     assert(elm != null, 'No element to patch');

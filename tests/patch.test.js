@@ -96,6 +96,21 @@ suite('patch', function () {
             const text = patch(vdiv, h({text: 'test'}));
             assert.notStrictEqual(div, text);
         });
+
+        test('replace element with different key', function () {
+            const node1 = h({tagName: 'div', key: 1});
+            const node2 = h({tagName: 'div', key: 2});
+            const div = patch(null, node1);
+            assert.notStrictEqual(patch(node1, node2), div);
+        });
+
+        test('replace element with cached element', function () {
+            const node1 = h({tagName: 'div', key: 1});
+            const node2 = h({tagName: 'div', key: 2});
+            const div1 = patch(null, node1);
+            patch(node1, node2);
+            assert.strictEqual(patch(node2, node1), div1);
+        });
     });
 
     suite('Node children', function () {
