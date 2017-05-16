@@ -1,6 +1,19 @@
 class VNodeBase {
-    constructor() {
-        this.isVNode = true;
+    get isVNode() { return true; }
+
+    updatedBy(newNode) {
+        newNode.setElement(this.elm);
+        this._wasUpdated = true;
+        return this;
+    }
+
+    canBeUpdatedBy(node) {
+        return !node._wasUpdated && node.elm == null;
+    }
+
+    reused() {
+        if (this._wasUpdated)
+            throw new Error("Can't reuse updated VNode");
     }
 
     setElement(element) {
@@ -29,7 +42,7 @@ class VTextNode extends VNodeBase {
     }
 
     canBeUpdatedBy(node) {
-        return node.isTextNode;
+        return super.canBeUpdatedBy(node) && node.isTextNode;
     }
 }
 
@@ -53,13 +66,17 @@ class VNode extends VNodeBase {
         this.children = [];
         this._normalizeChildren(children);
 
-        this.childrenMap = new Map();
+        this._childrenMap = new Map();
         this.children.forEach(child => {
-            this.childrenMap.set(child, true);
+            this._childrenMap.set(child, true);
         });
-        if (this.childrenMap.size < this.children.length) {
+        if (this._childrenMap.size < this.children.length) {
             throw new Error('Child VNode used more than once');
         }
+    }
+
+    hasChild(vnode) {
+        return this._childrenMap.has(vnode);
     }
 
     createEmptyCopy() {
@@ -67,7 +84,7 @@ class VNode extends VNodeBase {
     }
 
     canBeUpdatedBy(node) {
-        return node.isElementNode
+        return super.canBeUpdatedBy(node) && node.isElementNode
             && this.tagName === node.tagName
             && this.key === node.key;
     }
@@ -87,10 +104,15 @@ class VNode extends VNodeBase {
     }
 
     toJSON() {
-        const json = {...this};
-        ['childrenMap', 'isVNode'].forEach(
-            k => delete json[k]
-        );
+        // const json = {...this};
+        // ['childrenMap', 'isVNode'].forEach(
+        //     k => delete json[k]
+        // );
+        const json = {};
+        for (const key in this) {
+            if (key[0] === '_' || key === 'children') continue;
+            json[key] = this[key];
+        }
         json.children = this.children.map(c => c.toJSON());
         return json;
     }

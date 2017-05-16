@@ -13,8 +13,8 @@ export default function initialPatch(oldNode, newNode) {
 
 function ensureVNodeWithElement(vNode) {
     return vNode.elm == null
-        ? vNode.createEmptyCopy().setElement(vNode.elm
-            || vNode.isElementNode
+        ? vNode.createEmptyCopy().setElement(
+            vNode.elm || vNode.isElementNode
             ? document.createElement(vNode.tagName)
             : document.createTextNode('')
         )
@@ -61,6 +61,7 @@ function patch(oldNode, newNode) {
 
     if (oldNode === newNode) {
         // Updated without changes
+        newNode.reused();
         return elm;
     } else if (!oldNode.canBeUpdatedBy(newNode)) {
         // Old node removed (replaced)
@@ -70,7 +71,7 @@ function patch(oldNode, newNode) {
     } else {
         // Old node updated with new
         // New node updates old node
-        newNode.setElement(elm);
+        oldNode.updatedBy(newNode);
 
         if (newNode.isElementNode) {
             updateChildren(oldNode, newNode);
@@ -98,9 +99,9 @@ function updateChildren(oldNode, newNode) {
         const newChNode = newCh[i];
 
         const shouldRemoveOld =
-            oldChNode && !newNode.childrenMap.has(oldChNode);
+            oldChNode && !newNode.hasChild(oldChNode);
         const shouldInsertNew =
-            newChNode && !oldNode.childrenMap.has(newChNode);
+            newChNode && !oldNode.hasChild(newChNode);
 
         if (shouldRemoveOld && shouldInsertNew) {
             patch(oldChNode, newChNode);

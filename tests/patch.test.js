@@ -170,6 +170,32 @@ suite('patch', function () {
             );
         });
 
+        test('Replace cached children', function () {
+            const cachedChild1 = h.div({id: 'div1'});
+            const vnode1 = h.div({children: [
+                'text',
+                cachedChild1,
+            ]});
+            patch(div, vnode1);
+
+            const cachedChild2 = h.div({id: 'div2'});
+            const vnode2 = h.div({children: [
+                'text',
+                cachedChild2,
+            ]});
+            patch(vnode1, vnode2);
+
+            const vnode3 = h.div({children: [
+                'text',
+                cachedChild1,
+            ]});
+
+            assert.throws(
+                () => patch(vnode2, vnode3),
+                /can't reuse/i
+            );
+        });
+
         test('Rearrange cached children', function () {
             const children = [];
             for (let i = 0; i < 5; i++) children.push(h.div({children: i}));
@@ -209,7 +235,7 @@ suite('patch', function () {
             );
         });
 
-        test('Duplicated siblings', function () {
+        test.skip('Duplicated siblings', function () {
             const ch = h.div({children: 'div'});
             const vnode1 = h.div({children: [
                 h.div({children: [ch]}),
