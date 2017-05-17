@@ -15,7 +15,7 @@ suite('vnode', function () {
 
     test('non-string key', function () {
         const key = {object: true};
-        assert.throws(() => vnode({tagName: 'span', key}));
+        assert.strictEqual(vnode({tagName: 'span', key}).key, key);
     });
 
     test('null key', function () {

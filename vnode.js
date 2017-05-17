@@ -58,8 +58,6 @@ class VNode extends VNodeBase {
         if (key !== undefined) {
             if (key === null)
                 throw new Error("Can't use null as key");
-            if (typeof key !== 'number' && typeof key !== 'string')
-                throw new Error(`Can't use ${typeof key} as key`);
             this.key = key;
         }
 
@@ -104,10 +102,6 @@ class VNode extends VNodeBase {
     }
 
     toJSON() {
-        // const json = {...this};
-        // ['childrenMap', 'isVNode'].forEach(
-        //     k => delete json[k]
-        // );
         const json = {};
         for (const key in this) {
             if (key[0] === '_' || key === 'children') continue;
