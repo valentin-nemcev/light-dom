@@ -23,6 +23,20 @@ suite('vnode', function () {
         assert.throws(() => vnode({tagName: 'span', key}));
     });
 
+    test('ensure key with exiting key', function () {
+        assert.strictEqual(
+            vnode({tagName: 'span', key: 'key'}).ensureKey('otherKey').key,
+            'key'
+        );
+    });
+
+    test('ensure key without exiting key', function () {
+        assert.strictEqual(
+            vnode({tagName: 'span'}).ensureKey('otherKey').key,
+            'otherKey'
+        );
+    });
+
     test('data values', function () {
         assert.deepStrictEqual(
             vnode({tagName: 'span', dataStr: 'str', dataNull: null}).toJSON(),

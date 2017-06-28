@@ -55,11 +55,7 @@ class VNode extends VNodeBase {
         this.tagName = tagName.toLowerCase();
         Object.assign(this, options);
 
-        if (key !== undefined) {
-            if (key === null)
-                throw new Error("Can't use null as key");
-            this.key = key;
-        }
+        this._setKey(key);
 
         this.children = [];
         this._normalizeChildren(children);
@@ -71,6 +67,19 @@ class VNode extends VNodeBase {
         if (this._childrenMap.size < this.children.length) {
             throw new Error('Child VNode used more than once');
         }
+    }
+
+    _setKey(key) {
+        if (key !== undefined) {
+            if (key === null)
+                throw new Error("Can't use null as key");
+            this.key = key;
+        }
+    }
+
+    ensureKey(key) {
+        if (key != null && this.key == null) this._setKey(key);
+        return this;
     }
 
     hasChild(vnode) {
