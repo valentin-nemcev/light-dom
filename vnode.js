@@ -71,8 +71,7 @@ class VNode extends VNodeBase {
 
     _setKey(key) {
         if (key !== undefined) {
-            if (key === null)
-                throw new Error("Can't use null as key");
+            if (key === null) throw new Error("Can't use null as key");
             this.key = key;
         }
     }
@@ -101,6 +100,8 @@ class VNode extends VNodeBase {
             if (Array.isArray(child)) {
                 this._normalizeChildren(child);
             } else if (child != null) {
+                if (typeof child === 'object' && !child.isVNode)
+                    throw new Error('Children should be primitives or VNodes');
                 this.children.push(
                     typeof child === 'object'
                         ? child
