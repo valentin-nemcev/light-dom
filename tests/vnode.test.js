@@ -88,7 +88,7 @@ suite('vnode', function () {
     });
 
     test('vnode children', function () {
-        const childVnode = {};
+        const childVnode = vnode({tagname: 'span'});
         const n = vnode({tagName: 'span', children: childVnode});
         assert.strictEqual(n.children.length, 1);
         assert.strictEqual(n.children[0], childVnode);
@@ -144,12 +144,12 @@ suite('vnode', function () {
                 123,
                 '',
                 'text1',
-                {sel: 'child1'},
+                {isVNode: true, children: 'child1'},
                 [
-                    {sel: 'child2'},
+                    {isVNode: true, children: 'child2'},
                     null,
                     'text2',
-                    {sel: 'child3'},
+                    {isVNode: true, children: 'child3'},
                 ],
             ],
         }));
