@@ -9,7 +9,10 @@
     "lint": "eslint **/*.js",
     "postversion": "git push --follow-tags"
   },
-  "pre-commit": ["lint", "test"],
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valentin-nemcev/snabbdom-flat-h.git"
@@ -33,7 +36,8 @@
     "mocha": "3.0.2",
     "mocha-jsdom": "1.1.0",
     "power-assert": "1.4.1",
-    "pre-commit": "1.2.2"
+    "pre-commit": "1.2.2",
+    "sinon": "4.0.1"
   },
   "dependencies": {}
 }

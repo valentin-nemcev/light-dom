@@ -1,4 +1,5 @@
 import assert from 'assert';
+import sinon from 'sinon';
 import jsdom from 'mocha-jsdom';
 import h from '../h';
 import patch from '../patch';
@@ -221,6 +222,53 @@ suite('patch', function () {
             assert.strictEqual(el3, newEl3);
         });
 
+        test('Rearrange across hierachy (replace)', function () {
+            const child = h.p({children: 'p'});
+            const vnode1 = h.div({children: child});
+            const vnode2 = h.div({children: h.span({children: child})});
+
+            patch(div, vnode1);
+            const el = div.children[0];
+            patch(vnode1, vnode2);
+            const newEl = div.children[0].children[0];
+
+            assert.strictEqual(el, newEl);
+        });
+
+        test('Rearrange across hierachy (insert)', function () {
+            const child = h.p({children: 'p'});
+            const vnode1 = h.div({
+                children: [h.span({}), child, h.span({})],
+            });
+            const vnode2 = h.div({
+                children: [h.span({}), h.span({}), h.span({children: child})],
+            });
+
+            patch(div, vnode1);
+            const el = div.children[1];
+            patch(vnode1, vnode2);
+            const newEl = div.children[2].children[0];
+
+            assert.strictEqual(el, newEl);
+        });
+
+        test('Rearrange across hierachy (remove)', function () {
+            const child = h.p({children: 'p'});
+            const vnode1 = h.div({
+                children: [h.span({}), child],
+            });
+            const vnode2 = h.div({
+                children: [h.span({children: child})],
+            });
+
+            patch(div, vnode1);
+            const el = div.children[1];
+            patch(vnode1, vnode2);
+            const newEl = div.children[0].children[0];
+
+            assert.strictEqual(el, newEl);
+        });
+
         test('Duplicated children', function () {
             const ch = h.div({children: 'div'});
             assert.throws(() => {
@@ -235,7 +283,7 @@ suite('patch', function () {
             );
         });
 
-        test.skip('Duplicated siblings', function () {
+        test('Duplicated siblings', function () {
             const ch = h.div({children: 'div'});
             const vnode1 = h.div({children: [
                 h.div({children: [ch]}),
@@ -244,9 +292,126 @@ suite('patch', function () {
             ]});
             assert.throws(
                 () => patch(div, vnode1),
-                // /element already inserted/i
-                /can't overwrite element/i
+                /can't patch same vnode/i
             );
         });
+    });
+
+    suite('Hooks', function () {
+        let div;
+        setup(function () {
+            div = document.createElement('div');
+        });
+
+        test('Patch hook', function () {
+            const afterUpdate = sinon.spy();
+            const vnode1 = h({
+                tagName: 'div',
+                children: 'test1',
+                hooks: {afterUpdate},
+            });
+            const vnode2 = h({
+                tagName: 'div',
+                children: 'test2',
+            });
+            patch(null, vnode1);
+            patch(vnode1, vnode2);
+            assert(afterUpdate.calledOnce);
+            assert(afterUpdate.calledWith(vnode1, vnode2));
+        });
+
+        test('Attach hook', function () {
+            const afterAttach = sinon.spy();
+            const child = h.div({
+                children: 'div',
+                hooks: {afterAttach},
+            });
+            const vnode1 = h.div({children: []});
+            const vnode2 = h.div({children: child});
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+
+            assert(afterAttach.calledOnce);
+            assert(afterAttach.calledWith(child.elm));
+        });
+
+        test('Move hook', function () {
+            const beforeDetach = sinon.spy();
+            const afterAttach = sinon.spy();
+            const child = h.p({
+                children: 'p',
+                hooks: {afterAttach, beforeDetach},
+            });
+            const vnode1 = h.div({children: child});
+            const vnode2 = h.div({children: h.span({children: child})});
+            patch(div, vnode1);
+
+            afterAttach.reset();
+            patch(vnode1, vnode2);
+
+            assert(beforeDetach.calledOnce);
+            assert(afterAttach.calledOnce);
+            assert(afterAttach.calledWith(child.elm));
+        });
+
+        test('Move with detach hook', function () {
+            const beforeDetach = sinon.spy();
+            const afterAttach = sinon.spy();
+            const child = h.p({
+                children: 'p',
+                hooks: {afterAttach, beforeDetach},
+            });
+            const vnode1 = h.div({children: child});
+            const vnode2 = h.div({children: [
+                h.span({}),
+                h.span({children: child}),
+            ]});
+            patch(div, vnode1);
+
+            afterAttach.reset();
+            patch(vnode1, vnode2);
+
+            assert(beforeDetach.calledOnce);
+            assert(afterAttach.calledOnce);
+            assert(afterAttach.calledWith(child.elm));
+        });
+
+        test('Detach hook (remove)', function () {
+            const beforeDetach = sinon.spy(
+                elm => assert.strictEqual(elm.parentNode, div)
+            );
+            const child = h.div({
+                children: 'div',
+                hooks: {beforeDetach},
+            });
+            const vnode1 = h.div({children: child});
+            const vnode2 = h.div({children: []});
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+
+            assert(beforeDetach.calledOnce);
+            assert(beforeDetach.calledWith(child.elm, null));
+        });
+
+        test('Detach hook (replace)', function () {
+            const beforeDetach = sinon.spy();
+            const child = h.div({
+                children: 'div',
+                hooks: {beforeDetach},
+            });
+            const newChild = h.span({});
+            const vnode1 = h.div({children: child});
+            const vnode2 = h.div({children: newChild});
+
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+
+            assert(beforeDetach.calledOnce);
+            assert(beforeDetach.calledWith(child.elm, newChild.elm));
+        });
+
     });
 });

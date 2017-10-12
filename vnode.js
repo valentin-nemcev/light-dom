@@ -1,20 +1,42 @@
+const noop = () => {};
+
 class VNodeBase {
     get isVNode() { return true; }
 
-    updatedBy(newNode) {
+    updateBy(newNode, seqNo) {
         newNode.setElement(this.elm);
         this._wasUpdated = true;
+        this._updateSeqNo(seqNo);
+        newNode._updateSeqNo(seqNo);
         return this;
     }
+
+    afterUpdateBy() { return this; }
 
     canBeUpdatedBy(node) {
         return !node._wasUpdated && node.elm == null;
     }
 
-    reused() {
+    reused(seqNo) {
         if (this._wasUpdated)
             throw new Error("Can't reuse updated VNode");
+        this._updateSeqNo(seqNo);
+        return this;
     }
+
+    wasUpdated(seqNo) {
+        return this._seqNo != null && this._seqNo >= seqNo;
+    }
+
+    _updateSeqNo(seqNo) {
+        if (this.wasUpdated(seqNo))
+            throw new Error("Can't patch same VNode more than once");
+        this._seqNo = seqNo;
+    }
+
+    afterAttach() { return this; }
+
+    beforeDetach() { return this; }
 
     setElement(element) {
         if (this.elm != null) {
@@ -49,7 +71,7 @@ class VTextNode extends VNodeBase {
 class VNode extends VNodeBase {
     get isElementNode() { return true; }
 
-    constructor({tagName, key, children, ...options}) {
+    constructor({tagName, key, children, hooks, ...options}) {
         super();
 
         this.tagName = tagName.toLowerCase();
@@ -67,6 +89,13 @@ class VNode extends VNodeBase {
         if (this._childrenMap.size < this.children.length) {
             throw new Error('Child VNode used more than once');
         }
+
+        this._hooks = {
+            afterUpdate: noop,
+            afterAttach: noop,
+            beforeDetach: noop,
+            ...hooks,
+        };
     }
 
     _setKey(key) {
@@ -93,6 +122,24 @@ class VNode extends VNodeBase {
         return super.canBeUpdatedBy(node) && node.isElementNode
             && this.tagName === node.tagName
             && this.key === node.key;
+    }
+
+    afterUpdateBy(newNode) {
+        super.afterUpdateBy(newNode);
+        this._hooks.afterUpdate.call(null, this, newNode);
+        return this;
+    }
+
+    afterAttach() {
+        super.afterAttach(...arguments);
+        this._hooks.afterAttach.call(null, this.elm);
+        return this;
+    }
+
+    beforeDetach(replacingElm) {
+        super.beforeDetach(...arguments);
+        this._hooks.beforeDetach.call(null, this.elm, replacingElm);
+        return this;
     }
 
     _normalizeChildren(children) {
