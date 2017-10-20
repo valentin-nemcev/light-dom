@@ -2,15 +2,14 @@ import assert from 'assert';
 
 import {fromElement} from './vnode';
 
-function ensureVNode(node) {
-    return node == null || node.isVNode ? node : fromElement(node);
-}
-
 let patchSeqNo = 0;
 
 export default function initialPatch(oldNode, newNode) {
-    if (newNode == null) return;
-    return patch(ensureVNode(oldNode), newNode, patchSeqNo++);
+    if (oldNode != null && !oldNode.isVNode)
+        oldNode = fromElement(oldNode).setElement(oldNode);
+    if (newNode == null && oldNode.elm != null)
+        newNode = fromElement(oldNode.elm);
+    return patch(oldNode, newNode, patchSeqNo++);
 }
 
 function getPlaceholderWithElement(vNode) {

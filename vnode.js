@@ -175,8 +175,8 @@ export default function vnode(params) {
 
 export function fromElement(elm) {
     if (elm instanceof window.HTMLElement) {
-        return new VNode({tagName: elm.tagName}).setElement(elm);
+        return new VNode({tagName: elm.tagName});
     } else if (elm instanceof window.Text) {
-        return new VTextNode({text: elm.nodeValue}).setElement(elm);
+        return new VTextNode({text: elm.nodeValue});
     }
 }
