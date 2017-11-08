@@ -13,13 +13,12 @@ function isEmptyObject(object) {
 export function extractProperties(tagName, options) {
     const props = {};
     const restOptions = {};
-    const global = tagsProperties._global;
-    const element = tagsProperties[tagName] || {};
+    const defaultProps = tagsProperties[tagName] || tagsProperties._global;
     for (const name in options) {
-        const isProp = name in global || name in element;
+        const isProp = name in defaultProps;
         (isProp ? props : restOptions)[name] = options[name];
     }
-    return [props, restOptions];
+    return {defaultProps, props, restOptions};
 }
 
 function setClass(classObj, name, value) {
@@ -60,11 +59,11 @@ export default function h({
 }) {
     if (selector !== undefined) throw new Error('Selector is deprecated');
 
-    const [props, optionsSansProps] = extractProperties(tagName, options);
-    options = optionsSansProps;
+    const {defaultProps, props, restOptions} =
+        extractProperties(tagName, options);
+    options = {...restOptions, defaultProps};
     if (!isEmptyObject(props)) {
-        options.props =
-            Object.assign(props, optionsSansProps.props);
+        options.props = Object.assign(props, restOptions.props);
     }
 
     const classObj = normalizeClass(className, classToggle);

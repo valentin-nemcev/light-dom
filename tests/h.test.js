@@ -2,18 +2,50 @@ import assert from 'assert';
 import deepFreeze from 'deep-freeze-strict';
 import h, {c, toggleClasses} from '../h';
 
+const defaultProps = {
+    id: '',
+    className: '',
+    title: '',
+    lang: '',
+    dir: '',
+    hidden: false,
+    tabIndex: -1,
+    accessKey: '',
+};
+
+const defaultTdProps = {
+    colSpan: 1,
+    rowSpan: 1,
+    abbr: '',
+    align: '',
+    axis: '',
+    height: '',
+    width: '',
+    ch: '',
+    chOff: '',
+    noWrap: false,
+    vAlign: '',
+    bgColor: '',
+    ...defaultProps,
+};
+
 suite('h', function () {
     test('tagName', function () {
         assert.deepStrictEqual(
             h({tagName: 'span'}).toJSON(),
-            {tagName: 'span', children: []},
+            {tagName: 'span', children: [], defaultProps},
         );
     });
 
     test('flat properties', function () {
         assert.deepStrictEqual(
             h({tagName: 'td', colSpan: 1}).toJSON(),
-            {tagName: 'td', props: {colSpan: 1}, children: []}
+            {
+                tagName: 'td',
+                props: {colSpan: 1},
+                defaultProps: defaultTdProps,
+                children: [],
+            }
         );
     });
 
@@ -24,7 +56,12 @@ suite('h', function () {
                 colSpan: 1,
                 props: {colSpan: 2, id: 'id'},
             }).toJSON(),
-            {tagName: 'td', props: {id: 'id', colSpan: 2}, children: []}
+            {
+                tagName: 'td',
+                props: {id: 'id', colSpan: 2},
+                defaultProps: defaultTdProps,
+                children: [],
+            }
         );
     });
 
@@ -41,6 +78,7 @@ suite('h', function () {
                 tagName: 'td',
                 key: 'test',
                 props: {colSpan: 1},
+                defaultProps: defaultTdProps,
                 children: [{text: 'str'}],
             }
         );

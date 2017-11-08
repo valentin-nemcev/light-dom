@@ -63,12 +63,13 @@ suite('patch', function () {
 
         test('sequential node patch', function () {
             const vnode1 = h({
-                tagName: 'div',
-                id: 'id1',
-                title: 'test title',
-                class: {class1: true, class2: true},
-                style: {color: 'red', minHeight: '100%'},
-                children: 'test',
+                tagName: 'div', // not changed
+                id: 'id1', // not changed
+                title: 'test title', // emptied
+                class: {class1: true, class2: true}, // updated
+                style: {color: 'red', minHeight: '100%'}, // updated
+                tabIndex: 25, // removed
+                children: 'test', // not changed
             });
             const vnode2 = h({
                 tagName: 'div',
@@ -84,6 +85,7 @@ suite('patch', function () {
             assert.strictEqual(
                 div.outerHTML,
                 '<div class="class2 class3" id="id2" title=""'
+                + ' tabindex="-1"'
                 + ' style="min-height: 100%; max-height: 200%;"'
                 + ' lang="en">test</div>'
             );

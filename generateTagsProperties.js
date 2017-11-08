@@ -1,3 +1,4 @@
+import jsdom from 'jsdom';
 import idl4js from 'idl4js';
 import tags from 'idl4js/json/_tags.json';
 import {writeFileSync} from 'fs';
@@ -10,7 +11,7 @@ function getInterfaceChain(name, interfaces, result = []) {
     interfaces[name].inherits.forEach(
         (name) => {
             if (name !== 'HTMLElement' && name !== 'Node')
-                getInterfaceChain(name, interfaces, result)
+                getInterfaceChain(name, interfaces, result);
         }
     );
     return result;
@@ -30,12 +31,22 @@ const tagProps = {};
 
 const entries = [['_global', ''], ...Object.entries(html5Tags)];
 
+const document = jsdom.jsdom('');
+
 for (const [tagName, interfacePart] of entries) {
     const interfaces = interfacePart !== '' || tagName === '_global'
         ? getInterfaceChain(`HTML${interfacePart}Element`, html5Interfaces)
         : [];
     tagProps[tagName] =
         mergeProperties(interfaces.map(i => html5Interfaces[i].properties));
+
+    const element = document.createElement(tagName);
+    for (const prop in tagProps[tagName]) {
+        tagProps[tagName][prop] = element[prop];
+    }
+    if (tagName !== '_global') {
+        Object.assign(tagProps[tagName], tagProps._global);
+    }
 }
 
 writeFileSync('tagsProperties.json', JSON.stringify(tagProps, null, '    '));

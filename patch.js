@@ -136,8 +136,9 @@ function updateElement(oldNode, newNode) {
     );
     diffObject(oldNode.props, newNode.props,
         (name, oldValue, newValue) => {
-            if (newValue !== undefined) elm[name] = newValue;
-            else delete elm[name];
+            elm[name] = newValue !== undefined
+                ? newValue
+                : newNode.defaultProps[name];
         }
     );
     diffObject(oldNode.on, newNode.on,
