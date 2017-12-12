@@ -1,3 +1,5 @@
+import {inspect} from 'util';
+
 const noop = () => {};
 
 class VNodeBase {
@@ -55,6 +57,10 @@ class VTextNode extends VNodeBase {
         this.text = String(text);
     }
 
+    clone() {
+        return new VTextNode({text: this.text});
+    }
+
     createEmptyCopy() {
         return new VTextNode({text: ''});
     }
@@ -96,6 +102,23 @@ class VNode extends VNodeBase {
             beforeDetach: noop,
             ...hooks,
         };
+    }
+
+    clone() {
+        return new VNode({
+            ...this._getOptions(),
+            children: this.children.map(c => c.clone()),
+            hooks: this._hooks,
+        });
+    }
+
+    _getOptions() {
+        const options = {};
+        for (const key in this) {
+            if (key[0] === '_' || key === 'children') continue;
+            options[key] = this[key];
+        }
+        return options;
     }
 
     _setKey(key) {
@@ -144,26 +167,21 @@ class VNode extends VNodeBase {
 
     _normalizeChildren(children) {
         for (const child of Array.isArray(children) ? children : [children]) {
-            if (Array.isArray(child)) {
+            if (child == null)
+                continue;
+            else if (Array.isArray(child))
                 this._normalizeChildren(child);
-            } else if (child != null) {
-                if (typeof child === 'object' && !child.isVNode)
-                    throw new Error('Children should be primitives or VNodes');
-                this.children.push(
-                    typeof child === 'object'
-                        ? child
-                        : new VTextNode({text: child})
-                );
-            } // else skip
+            else if (typeof child === 'object' && child.isVNode)
+                this.children.push(child);
+            else if (typeof child === 'object' && !child.isVNode)
+                this.children.push(new VTextNode({text: inspect(child)}));
+            else
+                this.children.push(new VTextNode({text: child}));
         }
     }
 
     toJSON() {
-        const json = {};
-        for (const key in this) {
-            if (key[0] === '_' || key === 'children') continue;
-            json[key] = this[key];
-        }
+        const json = this._getOptions();
         json.children = this.children.map(c => c.toJSON());
         return json;
     }

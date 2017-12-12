@@ -414,6 +414,32 @@ suite('patch', function () {
             assert(beforeDetach.calledOnce);
             assert(beforeDetach.calledWith(child.elm, newChild.elm));
         });
+    });
 
+    suite('Cloned VNodes', function () {
+        let div;
+        setup(function () {
+            div = document.createElement('div');
+        });
+
+        test('Nested', function () {
+            const vnode = h.div({
+                tagName: 'div',
+                id: 'id',
+                title: 't',
+                children: [
+                    h.span({children: 'span'}),
+                    'text',
+                ],
+            });
+            const vnodeClone = vnode.clone();
+            patch(div, h.div({children: [vnode, vnodeClone]}));
+
+            assert.strictEqual(
+                div.innerHTML,
+                '<div id="id" title="t"><span>span</span>text</div>' +
+                '<div id="id" title="t"><span>span</span>text</div>'
+            );
+        });
     });
 });
