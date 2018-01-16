@@ -1,7 +1,5 @@
 import {inspect} from 'util';
 
-const noop = () => {};
-
 class VNodeBase {
     get isVNode() { return true; }
 
@@ -53,7 +51,7 @@ class VTextNode extends VNodeBase {
     get isTextNode() { return true; }
 
     constructor({text}) {
-        super();
+        super(...arguments);
         this.text = String(text);
     }
 
@@ -61,7 +59,7 @@ class VTextNode extends VNodeBase {
         return new VTextNode({text: this.text});
     }
 
-    createEmptyCopy() {
+    createPlaceholder() {
         return new VTextNode({text: ''});
     }
 
@@ -77,13 +75,32 @@ class VTextNode extends VNodeBase {
 class VNode extends VNodeBase {
     get isElementNode() { return true; }
 
-    constructor({tagName, key, children, hooks, ...options}) {
-        super();
+    constructor({
+        tagName,
+        key,
+        children,
+        hooks = {},
+        isPlaceholder,
+        ...options}
+    ) {
+        super(...arguments);
+        this._isPlaceholder = isPlaceholder;
 
         this.tagName = tagName.toLowerCase();
         Object.assign(this, options);
 
         this._setKey(key);
+
+        this._hooks = {
+            afterUpdate: hooks.afterUpdate,
+            afterAttach: hooks.afterAttach,
+            beforeDetach: hooks.beforeDetach,
+        };
+        this._hasNestedHooks = {
+            afterAttach: !!hooks.afterAttach,
+            beforeDetach: !!hooks.beforeDetach,
+        };
+        this._hookSeqNos = {};
 
         this.children = [];
         this._normalizeChildren(children);
@@ -91,17 +108,14 @@ class VNode extends VNodeBase {
         this._childrenMap = new Map();
         this.children.forEach(child => {
             this._childrenMap.set(child, true);
+            ['afterAttach', 'beforeDetach'].forEach(hook => {
+                this._hasNestedHooks[hook] = this._hasNestedHooks[hook] ||
+                    (child._hasNestedHooks || {})[hook];
+            });
         });
         if (this._childrenMap.size < this.children.length) {
             throw new Error('Child VNode used more than once');
         }
-
-        this._hooks = {
-            afterUpdate: noop,
-            afterAttach: noop,
-            beforeDetach: noop,
-            ...hooks,
-        };
     }
 
     clone() {
@@ -137,8 +151,12 @@ class VNode extends VNodeBase {
         return this._childrenMap.has(vnode);
     }
 
-    createEmptyCopy() {
-        return new VNode({tagName: this.tagName, key: this.key});
+    createPlaceholder() {
+        return new VNode({
+            tagName: this.tagName,
+            key: this.key,
+            isPlaceholder: true,
+        });
     }
 
     canBeUpdatedBy(node) {
@@ -149,19 +167,42 @@ class VNode extends VNodeBase {
 
     afterUpdateBy(newNode) {
         super.afterUpdateBy(newNode);
-        this._hooks.afterUpdate.call(null, this, newNode);
+        this._isPlaceholder = false;
+        if (this._hooks.afterUpdate)
+            this._hooks.afterUpdate.call(null, this, newNode);
         return this;
     }
 
-    afterAttach() {
+    _callHooks(hook, {nested, ...args}, seqNo) {
+        // Run hook only once per patch operatin
+        if (this._hookSeqNos[hook] >= seqNo) return;
+        this._hookSeqNos[hook] = seqNo;
+
+        if (this._hooks[hook])
+            this._hooks[hook].call(null, this.elm, {nested, ...args});
+        this.children.forEach(c => {
+            if ((c._hasNestedHooks || {})[hook])
+                c._callHooks(hook, {nested: true}, seqNo);
+        });
+    }
+
+    afterAttach(parentNode) {
         super.afterAttach(...arguments);
-        this._hooks.afterAttach.call(null, this.elm);
+        this._callHooks(
+            'afterAttach',
+            {nested: !!(parentNode || {})._isPlaceholder},
+            this._seqNo
+        );
         return this;
     }
 
-    beforeDetach(replacingElm) {
+    beforeDetach(replacedWithElm) {
         super.beforeDetach(...arguments);
-        this._hooks.beforeDetach.call(null, this.elm, replacingElm);
+        this._callHooks(
+            'beforeDetach',
+            {replacedWithElm, nested: false},
+            this._seqNo
+        );
         return this;
     }
 

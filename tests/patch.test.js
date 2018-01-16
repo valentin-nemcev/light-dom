@@ -334,8 +334,35 @@ suite('patch', function () {
 
             patch(vnode1, vnode2);
 
-            assert(afterAttach.calledOnce);
-            assert(afterAttach.calledWith(child.elm));
+            assert.equal(afterAttach.callCount, 1);
+            assert.strictEqual(afterAttach.args[0][0], child.elm);
+            assert.deepEqual(afterAttach.args[0][1], {nested: false});
+        });
+
+        test('Attach hook (nested)', function () {
+            const afterAttach = sinon.spy();
+            const child = h.div({
+                id: 'outer',
+                children: h.div({
+                    id: 'inner',
+                    hooks: {afterAttach},
+                }),
+            });
+            patch(null, child);
+            afterAttach.reset();
+
+            const vnode1 = h.div({children: []});
+            const vnode2 = h.div({children: child});
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+
+            assert.equal(afterAttach.callCount, 1);
+            assert.strictEqual(
+                afterAttach.args[0][0].parentElement,
+                child.elm
+            );
+            assert.deepEqual(afterAttach.args[0][1], {nested: true});
         });
 
         test('Move hook', function () {
@@ -352,9 +379,10 @@ suite('patch', function () {
             afterAttach.reset();
             patch(vnode1, vnode2);
 
-            assert(beforeDetach.calledOnce);
-            assert(afterAttach.calledOnce);
-            assert(afterAttach.calledWith(child.elm));
+            assert.equal(beforeDetach.callCount, 1);
+            assert.equal(afterAttach.callCount, 1);
+            assert.strictEqual(afterAttach.args[0][0], child.elm);
+            assert.deepEqual(afterAttach.args[0][1], {nested: true});
         });
 
         test('Move with detach hook', function () {
@@ -374,12 +402,41 @@ suite('patch', function () {
             afterAttach.reset();
             patch(vnode1, vnode2);
 
-            assert(beforeDetach.calledOnce);
-            assert(afterAttach.calledOnce);
-            assert(afterAttach.calledWith(child.elm));
+            assert.equal(beforeDetach.callCount, 1);
+            assert.equal(afterAttach.callCount, 1);
+            assert.strictEqual(afterAttach.args[0][0], child.elm);
+            assert.deepEqual(afterAttach.args[0][1], {nested: true});
         });
 
-        test('Detach hook (remove)', function () {
+        test('Replace hook', function () {
+            const beforeDetach = sinon.spy();
+            const afterAttach = sinon.spy();
+            const child = h.div({
+                children: 'div',
+                hooks: {beforeDetach},
+            });
+            const newChild = h.span({
+                hooks: {afterAttach},
+            });
+            const vnode1 = h.div({children: child});
+            const vnode2 = h.div({children: newChild});
+
+            patch(div, vnode1);
+
+            patch(vnode1, vnode2);
+
+            assert.equal(beforeDetach.callCount, 1);
+            assert.strictEqual(beforeDetach.args[0][0], child.elm);
+            assert.strictEqual(
+                beforeDetach.args[0][1].replacedWithElm,
+                newChild.elm
+            );
+            assert.equal(afterAttach.callCount, 1);
+            assert.strictEqual(afterAttach.args[0][0], newChild.elm);
+            assert.deepEqual(afterAttach.args[0][1], {nested: false});
+        });
+
+        test('Detach hook', function () {
             const beforeDetach = sinon.spy(
                 elm => assert.strictEqual(elm.parentNode, div)
             );
@@ -393,27 +450,33 @@ suite('patch', function () {
 
             patch(vnode1, vnode2);
 
-            assert(beforeDetach.calledOnce);
-            assert(beforeDetach.calledWith(child.elm, null));
+            assert.equal(beforeDetach.callCount, 1);
+            assert.strictEqual(beforeDetach.args[0][0], child.elm);
+            assert.strictEqual(beforeDetach.args[0][1].replacedWithElm, null);
         });
 
-        test('Detach hook (replace)', function () {
+        test('Detach hook (nested)', function () {
             const beforeDetach = sinon.spy();
             const child = h.div({
-                children: 'div',
-                hooks: {beforeDetach},
+                children: h.div({
+                    hooks: {beforeDetach},
+                }),
             });
-            const newChild = h.span({});
             const vnode1 = h.div({children: child});
-            const vnode2 = h.div({children: newChild});
-
+            const vnode2 = h.div({children: []});
             patch(div, vnode1);
 
             patch(vnode1, vnode2);
 
-            assert(beforeDetach.calledOnce);
-            assert(beforeDetach.calledWith(child.elm, newChild.elm));
+            assert.equal(beforeDetach.callCount, 1);
+            assert.strictEqual(
+                beforeDetach.args[0][0].parentElement,
+                child.elm
+            );
+            assert.equal(beforeDetach.args[0][1].replacedWithElm, null);
+            assert.strictEqual(beforeDetach.args[0][1].nested, true);
         });
+
     });
 
     suite('Cloned VNodes', function () {

@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import {fromElement} from './vnode';
 
 let patchSeqNo = 0;
@@ -13,7 +11,7 @@ export default function initialPatch(oldNode, newNode) {
 }
 
 function getPlaceholderWithElement(vNode) {
-    return vNode.createEmptyCopy().setElement(
+    return vNode.createPlaceholder().setElement(
         vNode.elm || vNode.isElementNode
         ? document.createElement(vNode.tagName)
         : document.createTextNode('')
@@ -29,15 +27,18 @@ function diffObject(oldObj = {}, newObj = {}, set) {
     }
 }
 
-function replaceElement(node, seqNo, newElm) {
+function replaceElement(node, newNode, seqNo) {
     if (node.wasUpdated(seqNo)) return;
-    node.beforeDetach(newElm);
-    if (newElm === null) node.elm.remove();
-    else if (node.elm.parentNode)
-        node.elm.parentNode.replaceChild(newElm, node.elm);
+    node.beforeDetach(newNode && newNode.elm);
+    if (newNode === null) node.elm.remove();
+    else if (node.elm.parentNode) {
+        node.elm.parentNode.replaceChild(newNode.elm, node.elm);
+        newNode.afterAttach();
+    }
 }
 
-function insertElement(node, parentElm, afterElm) {
+function insertElement(node, parentNode, afterElm) {
+    const parentElm = parentNode.elm;
     const beforeElm = afterElm
         ? afterElm.nextSibling
         : parentElm.firstChild;
@@ -51,7 +52,7 @@ function insertElement(node, parentElm, afterElm) {
             parentElm.appendChild(node.elm);
         }
         if (prevParentElm !== parentElm) {
-            node.afterAttach();
+            node.afterAttach(parentNode);
         }
     }
 }
@@ -64,13 +65,10 @@ function patch(oldNode, newNode, seqNo) {
     if (oldNode == null && newNode.elm == null)
         oldNode = getPlaceholderWithElement(newNode);
 
-    const elm = oldNode.elm;
-    assert(elm != null, 'No element to patch');
-
     if (!oldNode.canBeUpdatedBy(newNode)) {
         // Old node removed (replaced)
         const newElm = patch(null, newNode, seqNo);
-        replaceElement(oldNode, seqNo, newElm);
+        replaceElement(oldNode, newNode, seqNo);
         return newElm;
     } else {
         // Old node updated with new
@@ -78,8 +76,8 @@ function patch(oldNode, newNode, seqNo) {
         oldNode.updateBy(newNode, seqNo);
 
         if (newNode.isElementNode) {
-            updateChildren(oldNode, newNode, seqNo);
             updateElement(oldNode, newNode);
+            updateChildren(oldNode, newNode, seqNo);
         } else {
             updateTextNode(oldNode, newNode);
         }
@@ -103,6 +101,7 @@ function updateChildren(oldNode, newNode, seqNo) {
         const oldChNode = oldCh[i];
         const newChNode = newCh[i];
 
+
         const shouldRemoveOld =
             oldChNode && !newNode.hasChild(oldChNode);
         const shouldInsertNew =
@@ -112,14 +111,14 @@ function updateChildren(oldNode, newNode, seqNo) {
             patch(oldChNode, newChNode, seqNo);
         } else if (shouldRemoveOld) {
             // Old node removed
-            replaceElement(oldChNode, seqNo, null);
+            replaceElement(oldChNode, null, seqNo);
         } else if (shouldInsertNew) {
             patch(null, newChNode, seqNo);
         }
 
         // New node moved or inserted
         if (newChNode) {
-            insertElement(newChNode, oldNode.elm, prevEl);
+            insertElement(newChNode, oldNode, prevEl);
             const insertHook =
                 (newChNode.hook || {}).insert;
             insertHook && insertHook(newChNode);
