@@ -11,7 +11,10 @@ class VNodeBase {
         return this;
     }
 
-    afterUpdateBy() { return this; }
+    afterUpdateBy(newNode) {
+        newNode.afterUpdate && newNode.afterUpdate(this);
+        return this;
+    }
 
     canBeUpdatedBy(node) {
         return !node._wasUpdated && node.elm == null;
@@ -166,10 +169,13 @@ class VNode extends VNodeBase {
     }
 
     afterUpdateBy(newNode) {
-        super.afterUpdateBy(newNode);
         this._isPlaceholder = false;
+        super.afterUpdateBy(newNode);
+    }
+
+    afterUpdate(oldNode) {
         if (this._hooks.afterUpdate)
-            this._hooks.afterUpdate.call(null, this, newNode);
+            this._hooks.afterUpdate.call(null, this, oldNode);
         return this;
     }
 

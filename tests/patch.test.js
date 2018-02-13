@@ -310,16 +310,17 @@ suite('patch', function () {
             const vnode1 = h({
                 tagName: 'div',
                 children: 'test1',
-                hooks: {afterUpdate},
             });
             const vnode2 = h({
                 tagName: 'div',
                 children: 'test2',
+                hooks: {afterUpdate},
             });
             patch(null, vnode1);
             patch(vnode1, vnode2);
-            assert(afterUpdate.calledOnce);
-            assert(afterUpdate.calledWith(vnode1, vnode2));
+            assert.equal(afterUpdate.callCount, 1);
+            assert.strictEqual(afterUpdate.args[0][0], vnode2);
+            assert.strictEqual(afterUpdate.args[0][1], vnode1);
         });
 
         test('Attach hook', function () {
