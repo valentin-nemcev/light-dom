@@ -39,6 +39,17 @@ function normalizeClass(...args) {
     return classObj;
 }
 
+function normalizeClassArray(cls, result = {}) {
+    if (!cls) return result;
+    if (Array.isArray(cls))
+        cls.forEach(c => normalizeClassArray(c, result));
+    else if (typeof cls == 'object')
+        Object.keys(cls).forEach(c => normalizeClassArray(c, result));
+    else
+        String(cls).split(' ').forEach(c => { result[c] = true; });
+    return result;
+}
+
 export {normalizeClass as c};
 
 export function toggleClasses(classes, toggles) {
@@ -66,6 +77,8 @@ export default function h({
         options.props = Object.assign(props, restOptions.props);
     }
 
+    if (Array.isArray(options.class))
+        options.class = normalizeClassArray(options.class);
     const classObj = normalizeClass(className, classToggle);
     if (!isEmptyObject(classObj)) {
         if (options.class == null) options.class = {};

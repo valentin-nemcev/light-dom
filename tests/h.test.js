@@ -87,6 +87,38 @@ suite('h', function () {
     test('tag shorthand function options object is not mutated', function () {
         h.td(deepFreeze({key: 'test', colSpan: 1, children: 'str'}));
     });
+
+    test('class property', function () {
+        const objClass = {test5: true, 'test6 test7': true};
+        assert.deepStrictEqual(
+            h.div({
+                class: [
+                    'test1 test2',
+                    'test3',
+                    '',
+                    null,
+                    0,
+                    false,
+                    undefined,
+                    [['test4']],
+                    12,
+                    {},
+                    [],
+                    objClass,
+                ],
+            }).class,
+            {
+                12: true,
+                test1: true,
+                test2: true,
+                test3: true,
+                test4: true,
+                test5: true,
+                test6: true,
+                test7: true,
+            }
+        );
+    });
 });
 
 test('c', function () {
