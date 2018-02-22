@@ -131,7 +131,7 @@ function updateElement(oldNode, newNode) {
     const elm = oldNode.elm;
 
     diffObject(oldNode.class, newNode.class,
-        (name, oldValue, newValue) => elm.classList.toggle(name, newValue)
+        (name, oldValue, newValue) => elm.classList.toggle(name, !!newValue)
     );
     diffObject(oldNode.props, newNode.props,
         (name, oldValue, newValue) => {
