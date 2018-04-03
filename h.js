@@ -21,10 +21,10 @@ export function extractProperties(tagName, options) {
     return {defaultProps, props, restOptions};
 }
 
+
 function setClass(classObj, name, value) {
     name && name.split(' ').forEach(n => (classObj[n] = classObj[n] || value));
 }
-
 
 function normalizeClass(...args) {
     const classObj = {};
@@ -39,18 +39,18 @@ function normalizeClass(...args) {
     return classObj;
 }
 
+export {normalizeClass as c};
+
 function normalizeClassArray(cls, result = {}) {
     if (!cls) return result;
     if (Array.isArray(cls))
         cls.forEach(c => normalizeClassArray(c, result));
-    else if (typeof cls == 'object')
-        Object.keys(cls).forEach(c => normalizeClassArray(c, result));
-    else
+    else if (typeof cls == 'object') {
+        for (const c in cls) if (cls[c]) normalizeClassArray(c, result);
+    } else
         String(cls).split(' ').forEach(c => { result[c] = true; });
     return result;
 }
-
-export {normalizeClass as c};
 
 export function toggleClasses(classes, toggles) {
     const result = {};
@@ -63,13 +63,9 @@ export function toggleClasses(classes, toggles) {
 
 export default function h({
     tagName,
-    selector,
-    className,
-    classToggle,
+    class: classes,
     ...options
 }) {
-    if (selector !== undefined) throw new Error('Selector is deprecated');
-
     const {defaultProps, props, restOptions} =
         extractProperties(tagName, options);
     options = {...restOptions, defaultProps};
@@ -77,13 +73,8 @@ export default function h({
         options.props = Object.assign(props, restOptions.props);
     }
 
-    if (Array.isArray(options.class))
-        options.class = normalizeClassArray(options.class);
-    const classObj = normalizeClass(className, classToggle);
-    if (!isEmptyObject(classObj)) {
-        if (options.class == null) options.class = {};
-        Object.assign(options.class, classObj);
-    }
+    const classObj = normalizeClassArray(classes);
+    if (!isEmptyObject(classObj)) options.class = classObj;
 
     return vnode({tagName, ...options});
 }

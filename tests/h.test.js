@@ -119,6 +119,41 @@ suite('h', function () {
             }
         );
     });
+
+    test('class property with primitive value', function () {
+        assert.deepStrictEqual(
+            h.div({class: 'test1 test2'}).class,
+            {test1: true, test2: true}
+        );
+        assert.deepStrictEqual(
+            h.div({class: 'test3'}).class,
+            {test3: true}
+        );
+        ['', null, 0, false, undefined, {}, []].forEach(
+            c => assert.deepStrictEqual(
+                h.div({class: c}).class,
+                undefined
+            )
+        );
+    });
+
+    test('class propery with object value', function () {
+        assert.deepStrictEqual(
+            h.div({
+                class: {
+                    test0: false,
+                    test1: true,
+                    'base1 test2': true,
+                    'base1 test3': false,
+                },
+            }).class,
+            {
+                test1: true,
+                base1: true,
+                test2: true,
+            }
+        );
+    });
 });
 
 test('c', function () {
